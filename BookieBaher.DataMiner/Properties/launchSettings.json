@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BookieBaher.DataMiner": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

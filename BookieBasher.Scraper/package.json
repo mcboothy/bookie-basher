@@ -1,0 +1,17 @@
+{
+  "name": "bookie-basher.scraper",
+  "version": "0.0.0",
+  "description": "BookieBasher.Scraper",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "amqplib": "0.5.5",
+    "async-csv": "^2.1.3",
+    "csv-reader": "^1.0.6",
+    "csv-writer": "^1.6.0",
+    "moment": "^2.24.0",
+    "puppeteer-core": "2.1.1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "MQHost": "25.69.207.54",
+  "MQPort": 5672,
+  "MQUsername": "mcboothy",
+  "MQPassword": "031083",
+  "ConnectionString": "server=localhost;port=3306;user=root;password=admin;database=bookie_basher",
+  "InboundQueue": "FS.ProcessQueue",
+  "OutboundQueue": "FS.FetchQueue",
+  "ErrorQueue": "FS.ErrorQueue"
+}
