@@ -20,7 +20,9 @@ namespace BookieBasher.Core
 
         public bool IsConnected
         {
-            get { return connection != null && connection.IsOpen && !disposed; }
+            get { return connection != null && 
+                         connection.IsOpen && 
+                         !disposed; }
         }
 
         public IModel CreateModel()
@@ -45,17 +47,13 @@ namespace BookieBasher.Core
         {
             lock (syncObject)
             {
-                PolicyHelper.ApplyPolicy(() =>
-                {
-                    connection = connectionFactory.CreateConnection();
-                });
+                connection = connectionFactory.CreateConnection();
 
                 if (IsConnected)
                 {
                     connection.ConnectionShutdown += OnConnectionShutdown;
                     connection.CallbackException += OnCallbackException;
                     connection.ConnectionBlocked += OnConnectionBlocked;
-
                     OnConnectionCreated?.Invoke(this, EventArgs.Empty);
 
                     return true;
@@ -67,18 +65,21 @@ namespace BookieBasher.Core
 
         private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
         {
+            Console.WriteLine($"Connection Blocked - {e.Reason}");
             if (!disposed)
                 TryConnect();
         }
 
         void OnCallbackException(object sender, CallbackExceptionEventArgs e)
         {
+            Console.WriteLine($"Callback Exception - {e.Exception.Message}");
             if (!disposed)
                 TryConnect();
         }
 
-        void OnConnectionShutdown(object sender, ShutdownEventArgs reason)
+        void OnConnectionShutdown(object sender, ShutdownEventArgs e)
         {
+            Console.WriteLine($"Connection Shutedown - {e.Cause}");
             if (!disposed)
                 TryConnect();
         }

@@ -1,6 +1,7 @@
 ﻿using Polly;
 using RabbitMQ.Client.Exceptions;
 using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace BookieBasher.Core
@@ -15,6 +16,7 @@ namespace BookieBasher.Core
 
         private static Policy policy = Policy.Handle<SocketException>()
                                            .Or<BrokerUnreachableException>()
+                                           .Or<IOException>()
                                            .WaitAndRetryForever(sleepProvider);
 
         public static void ApplyPolicy(Action action)

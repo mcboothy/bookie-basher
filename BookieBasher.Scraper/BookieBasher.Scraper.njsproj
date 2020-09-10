@@ -29,17 +29,22 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="app.js" />
-    <Content Include="config.json">
-      <SubType>Code</SubType>
+    <Content Include="..\config.json">
+      <Link>config.json</Link>
     </Content>
+    <Content Include="app.js" />
     <Content Include="flashscores-scraper.js" />
-    <Content Include="iso-scraper.js">
+    <Content Include="message-handler.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="package.json" />
-    <Content Include="README.md" />
+    <Content Include="browser.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="test-data.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="wiki-scraper.js">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>

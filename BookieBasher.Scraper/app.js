@@ -1,141 +1,110 @@
 'use strict';
 var fs = require('fs');
-var amqp = require('amqplib/callback_api');
-var scraper = require('./flashscores-scraper');
+var amqp = require('amqplib');
+var handler = require('./message-handler');
 var config = JSON.parse(fs.readFileSync('./config.json', 'UTF-8'));
 
-let url = "amqp://" + config.MQUsername + ":" + config.MQPassword + "@" + config.MQHost;
+const username = process.env.MQUsername || config.MQUsername;
+const password = process.env.MQPassword || config.MQPassword;
+const host = process.env.MQHost || config.MQHost;
+const port = process.env.MQPort || config.MQPort;
+const vHost = process.env.MQVirtualHost || config.MQVirtualHost;
 
-scraper.init(config.ChromePath).then(() => {
+const chrome = process.env.ChromePath || config.ChromePath;
+const queueIn = process.env.InboundQueue || config.InboundQueue;
+const queueOut = process.env.InboundQueue || config.OutboundQueue;
+const queueError = process.env.ErrorQueue || config.ErrorQueue;
 
-    amqp.connect(url, function (err, conn) {
-        if (err) {
-            console.error(err);
-            return;
-        }
+//var amqp = require('amqplib/callback_api');
+//process.env.CLOUDAMQP_URL = 'amqp://localhost';
 
-        conn.createChannel(async function (err, channel) {
-            if (err) {
-                console.error(err);
-                return;
-            }
+//// if the connection is closed or fails to be established at all, we will reconnect
+//var amqpConn = null;
+//function start() {
+//    amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function (err, conn) {
+//        if (err) {
+//            console.error("[AMQP]", err.message);
+//            return setTimeout(start, 7000);
+//        }
+//        conn.on("error", function (err) {
+//            if (err.message !== "Connection closing") {
+//                console.error("[AMQP] conn error", err.message);
+//            }
+//        });
+//        conn.on("close", function () {
+//            console.error("[AMQP] reconnecting");
+//            return setTimeout(start, 7000);
+//        });
 
-            channel.prefetch(config.PrefetchCount, true);
+//        console.log("[AMQP] connected");
+//        amqpConn = conn;
 
-            channel.consume(config.InboundQueue, async function (msg) {
-                try {
-                    var request = JSON.parse(msg.content.toString());
+//        whenConnected();
+//    });
+//}
 
-                    switch (msg.properties.contentType) {
-                        case "request-teams": {
-                            scraper.scrapeTeams(request)
-                                .then((teams) => {
-                                    var data = Buffer.from(JSON.stringify({
-                                        Season: request,
-                                        Teams: teams
-                                    }));
-                                    sendResults(channel, "process-teams", data, msg);
-                                }).catch((err) => {
-                                    console.error(err);
-                                    var data = Buffer.from(JSON.stringify({
-                                        Request: request,
-                                        Error: JSON.stringify(err)
-                                    }));
-                                    sendError(channel, data, msg);
-                                });
-                            break;
-                        }
-                        case "request-fixtures": {
-                            scraper.scrapeFixtures(request)
-                                .then((fixtures) => {
-                                    var data = Buffer.from(JSON.stringify({
-                                        Season: request,
-                                        Matches: fixtures
-                                    }));
-                                    sendResults(channel, "process-fixtures", data, msg);
-                                }).catch((err) => {
-                                    console.error(err);
-                                    var data = Buffer.from(JSON.stringify({
-                                        Request: request,
-                                        Error: JSON.stringify(err)
-                                    }));
-                                    sendError(channel, data, msg);
-                                });
-                            break;
-                        }
-                        case "request-match": {
-                            scraper.scrapeMatch(request)
-                                .then((result) => {
-                                    var data = Buffer.from(JSON.stringify({
-                                        Request: request,
-                                        MatchStats: result
-                                    }));
-                                    sendResults(channel, "process-match", data, msg);
-                                }).catch((err) => {
-                                    console.error(err);
-                                    var data = Buffer.from(JSON.stringify({
-                                        Request: request,
-                                        Error: JSON.stringify(err)
-                                    }));
-                                    sendError(channel, data, msg);
-                                });
-                            break;
-                        }
-                        case "request-standings": {
-                            scraper.scrapeStandings(request)
-                                .then((result) => {
-                                    var data = Buffer.from(JSON.stringify({
-                                        Season: request,
-                                        Leagues: result
-                                    }));
-                                    sendResults(channel, "process-standings", data, msg);
-                                }).catch((err) => {
-                                    console.error(err);
-                                    var data = Buffer.from(JSON.stringify({
-                                        Request: request,
-                                        Error: JSON.stringify(err)
-                                    }));
-                                    sendError(channel, data, msg);
-                                });
-                            break;
-                        }
-                        default:
-                            console.error("UNKNOWN MESSAGE : " + msg.properties.contentType);
-                            channel.reject(msg, false);
-                            break;
-                    }
-                } catch (err) {
-                    console.error(err);
-                    var data = Buffer.from(JSON.stringify({
-                        Request: request,
-                        Error: JSON.stringify(err)
-                    }));
-                    sendError(channel, data, msg);
-                }
-                
-            }, {
-                noAck: false
-            });
+//function whenConnected() {
+//    amqpConn.createChannel(function (err, ch) {
+//        if (closeOnErr(err)) return;
+//        ch.on("error", function (err) {
+//            console.error("[AMQP] channel error", err.message);
+//        });
+//        ch.on("close", function () {
+//            console.log("[AMQP] channel closed");
+//        });
+//        ch.prefetch(10);
+//        ch.assertQueue("jobs", { durable: true }, function (err, _ok) {
+//            if (closeOnErr(err)) return;
+//            ch.consume("jobs", processMsg, { noAck: false });
+//            console.log("Worker is started");
+//        });
 
-            process.on('exit', (code) => {
-                channel.close();
-            });
-        });
+//        function processMsg(msg) {
+
+//        }
+//    });
+//}
+
+//function closeOnErr(err) {
+//    if (!err) return false;
+//    console.error("[AMQP] error", err);
+//    amqpConn.close();
+//    return true;
+//}
+
+
+
+
+(async () => {
     
-        process.on('exit', (code) => {
-            scraper.shutdown();
+    try {
+        var url = "amqp://" + encodeURIComponent(username)
+            + ":" + encodeURIComponent(password)
+            + "@" + host
+            + ":" + port
+            + "/" + vHost;
+
+        console.log(url);
+
+        const conn = await amqp.connect(url);
+        const channel = await conn.createChannel();
+
+        await handler.init(chrome, queueOut, queueError);
+
+        process.on('exit', async (code) => {
+            await channel.close();
+            await handler.shutdown();
         });
-    });
-});
 
-function sendResults(channel, type, data, msg) {
-    var opts = { contentType: type };
-    channel.sendToQueue(config.OutboundQueue, data, opts);
-    channel.ack(msg);
-}
+        await channel.prefetch(config.PrefetchCount, true);
+        await channel.consume(queueIn, async function (msg) {
+            await handler.onMessageRecieved(channel, msg);
+        },
+        { noAck: false });
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(-1);
+    }
+})();
 
-function sendError(channel, data, msg) {
-    var opts = { contentType: "Fetch-Error" };
-    channel.sendToQueue(config.ErrorQueue, data, opts);
-    channel.reject(msg, false);// TODO - Requeue X times
-}

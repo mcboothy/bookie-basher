@@ -1,9 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BookieBasher.Core.Database;
+using BookieBasher.Core.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BookieBasher.Core
 {
@@ -11,13 +17,18 @@ namespace BookieBasher.Core
     {
         protected ResilientConnection consumerConnection;
         protected ResilientConnection publisherConnection;
-        protected Dictionary<string, IModel> consumers;
+        protected IModel channel;
+        protected string consumerTag;
+        protected string scrapeQueue;
+        protected string errorQueue;
+        protected string updateQueue;
+        protected string statQueue;
+        protected DbContextOptions<BBDBContext> options;
         protected bool dispatchConsumersAsync;
         protected IConfigurationRoot configuration;
 
         protected FrameworkService(bool isAsync = true)
         {
-            consumers = new Dictionary<string, IModel>();
             dispatchConsumersAsync = isAsync;
             ReadConfig();
         }
@@ -35,19 +46,14 @@ namespace BookieBasher.Core
 
         public virtual void Stop()
         {
-            if (consumers != null)
+            if (channel != null)
             {
-                foreach(var pair in consumers)
-                {
-                    pair.Value.BasicCancel(pair.Key);
-                    pair.Value.Dispose();
-                }
-
-                consumers.Clear();
+                channel.BasicCancel(consumerTag);
+                channel.Dispose();
             }
         }
 
-        public void SendMessage(Message message, string queue, string exchange = "")
+        public void SendMessage(Message message, string queue = null, string exchange = "")
         {
             if (HasOutbound)
             {
@@ -56,34 +62,62 @@ namespace BookieBasher.Core
                     publisherConnection.TryConnect();
                 }
 
+                if (queue == null)
+                    queue = configuration.GetValue<string>("ScrapeQueue");
+
                 using (var channel = publisherConnection.CreateModel())
                 {
-                    PolicyHelper.ApplyPolicy(() =>
-                    {
-                        var properties = channel.CreateBasicProperties();
-                        properties.ReplyTo = message.ReplyTo;
-                        properties.Persistent = message.IsPersistant;
-                        properties.ContentType = message.ContentType;
-                        properties.Headers = message.Headers;
-                        channel.BasicPublish(
-                            exchange: exchange,
-                            routingKey: queue,
-                            mandatory: true,
-                            basicProperties: properties,
-                            body: message.Content.Encode());
-                    });
+                    var properties = channel.CreateBasicProperties();
+                    properties.ReplyTo = message.ReplyTo;
+                    properties.Persistent = message.IsPersistant;
+                    properties.ContentType = message.ContentType;
+                    properties.Headers = message.Headers;
+                    channel.BasicPublish(
+                        exchange: exchange,
+                        routingKey: queue,
+                        mandatory: true,
+                        basicProperties: properties,
+                        body: message.Content.Encode());
                 }
             }
         }
 
-        protected virtual void ReadConfig(IConfiguration config)
-        {
-            // do nothing
-        }
-
         protected virtual void CreateConsumers()
         {
-            // do nothing
+            if (channel != null)
+            {
+                channel.BasicCancel(consumerTag);
+                channel.Dispose();
+            }
+
+            channel = consumerConnection.CreateModel();
+            channel.BasicQos(0, 1, false);
+
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                bool reject = true;
+
+                try
+                {
+                    reject = !(await OnMessageRecieved(channel, ea));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ERROR -  {ex.Message}");
+                    SendMessage(Message.Create(ex, "process-error"), errorQueue);
+                }
+
+                if (reject)
+                    channel.BasicReject(deliveryTag: ea.DeliveryTag, requeue: false);
+                else
+                    channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+            };
+
+            consumerTag = channel.BasicConsume(
+                queue: configuration.GetValue<string>("InboundQueue"),
+                autoAck: false,
+                consumer: consumer);
         }
 
         private void ReadConfig()
@@ -94,18 +128,25 @@ namespace BookieBasher.Core
                 .AddEnvironmentVariables()
                 .Build();
 
-            string host = configuration.GetValue<string>("MQHost");
-            int port = configuration.GetValue<int>("MQPort");
-            string user = configuration.GetValue<string>("MQUsername");
-            string password = configuration.GetValue<string>("MQPassword");
+            string connectionString = configuration.GetValue<string>("ConnectionString");
+            var optionsBuilder = new DbContextOptionsBuilder<BBDBContext>();
+            optionsBuilder.UseMySql(connectionString);
+
+            scrapeQueue = configuration.GetValue<string>("ScrapeQueue");
+            errorQueue = configuration.GetValue<string>("ErrorQueue");
+            updateQueue = configuration.GetValue<string>("UpdateQueue");
+            statQueue = configuration.GetValue<string>("StatQueue");
+
+            options = optionsBuilder.Options;
 
             var factory = new ConnectionFactory()
             {
                 DispatchConsumersAsync = dispatchConsumersAsync,
-                HostName = host,
-                Port = port,
-                UserName = user,
-                Password = password
+                HostName = configuration.GetValue<string>("MQHost"),
+                VirtualHost = configuration.GetValue<string>("MQVirtualHost"),
+                Port = configuration.GetValue<int>("MQPort"),
+                UserName = configuration.GetValue<string>("MQUsername"),
+                Password = configuration.GetValue<string>("MQPassword")
             };
 
             consumerConnection = new ResilientConnection(factory);
@@ -115,10 +156,11 @@ namespace BookieBasher.Core
             {
                 var outboundFactory = new ConnectionFactory()
                 {
-                    HostName = host,
-                    Port = port,
-                    UserName = user,
-                    Password = password
+                    HostName = configuration.GetValue<string>("MQHost"),
+                    VirtualHost = configuration.GetValue<string>("MQVirtualHost"),
+                    Port = configuration.GetValue<int>("MQPort"),
+                    UserName = configuration.GetValue<string>("MQUsername"),
+                    Password = configuration.GetValue<string>("MQPassword")
                 };
 
                 publisherConnection = new ResilientConnection(outboundFactory);
@@ -126,5 +168,12 @@ namespace BookieBasher.Core
 
             ReadConfig(configuration);
         }
+
+        protected virtual void ReadConfig(IConfiguration config)
+        {
+            // do nothing
+        }
+
+        protected abstract Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args);
     }
 }

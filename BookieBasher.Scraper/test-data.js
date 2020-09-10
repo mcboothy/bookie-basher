@@ -7,7 +7,7 @@ var season = {
         "Competition": {
             "CompetitionId": 1,
             "Name": "Premier League",
-            "Url": "england/premier-league"
+            "FlashScoreUrl": "england/premier-league"
         }
     }
 };
@@ -21,7 +21,7 @@ var matchRequest = {
         "Competition": {
             "CompetitionId": 1,
             "Name": "Premier League",
-            "Url": "england/premier-league"
+            "FlashScoreUrl": "england/premier-league"
         }
     },
     "DateFrom": "2020-02-15T00:00:00+00:00"

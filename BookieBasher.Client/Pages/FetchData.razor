@@ -1,0 +1,37 @@
+@page "/fetchdata"
+@using BookieBasher.Client.ViewModels
+@using BookieBasher.Core.IO
+@inherits FixturesViewModel
+
+<h1>Fixtures</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (Fixtures == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Home Team</th>
+                <th></th>
+                <th>Away Team</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fixture in Fixtures)
+            {
+                <tr>
+                    <td>@fixture.DateTime.ToShortDateString()</td>
+                    <td>@fixture.HomeTeam</td>
+                    <td>vs</td>
+                    <td>@fixture.AwayTeam</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

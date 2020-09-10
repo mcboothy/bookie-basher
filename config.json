@@ -1,0 +1,15 @@
+{
+  "MQHost": "25.54.206.254",
+  "MQVirtualHost": "bookie-basher",
+  "MQPort": 5672,
+  "MQUsername": "bookie-basher",
+  "MQPassword": "P@ssword12",
+  "ConnectionString": "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher",
+  "ErrorQueue": "ErrorQueue",
+  "UpdateQueue": "UpdateQueue",
+  "MatchProcessQueue": "MatchProcessQueue",
+  "ScrapeQueue": "ScrapeQueue",
+  "StatQueue": "StatQueue",
+  "ChromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+  "PrefetchCount": 1  
+}

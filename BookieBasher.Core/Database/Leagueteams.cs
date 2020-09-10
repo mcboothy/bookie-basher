@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BookieBasher.Core.Database
 {
-    public partial class Leagueteams
+    public partial class LeagueTeams
     {
         public int TeamId { get; set; }
         public int SeasonId { get; set; }

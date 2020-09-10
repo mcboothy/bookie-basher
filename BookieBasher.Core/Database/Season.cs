@@ -8,8 +8,8 @@ namespace BookieBasher.Core.Database
         public Season()
         {
             Averagestat = new HashSet<Averagestat>();
-            Leagueposition = new HashSet<Leagueposition>();
             Match = new HashSet<Match>();
+            Team = new HashSet<Team>();
         }
 
         public int SeasonId { get; set; }
@@ -20,7 +20,7 @@ namespace BookieBasher.Core.Database
 
         public virtual Competition Competition { get; set; }
         public virtual ICollection<Averagestat> Averagestat { get; set; }
-        public virtual ICollection<Leagueposition> Leagueposition { get; set; }
         public virtual ICollection<Match> Match { get; set; }
+        public virtual ICollection<Team> Team { get; set; }
     }
 }

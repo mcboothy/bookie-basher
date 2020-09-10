@@ -6,9 +6,10 @@ namespace BookieBasher.Core.Database
     public partial class Averagestat
     {
         public int AverageStatId { get; set; }
-        public string Type { get; set; }
-        public int SeasonId { get; set; }
         public int TeamId { get; set; }
+        public int SeasonId { get; set; }
+        public int GamesPlayed { get; set; }
+        public string Type { get; set; }
         public double FirstHalfGoal { get; set; }
         public double SecondHalfGoal { get; set; }
         public double TotalGoal { get; set; }

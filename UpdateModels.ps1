@@ -2,8 +2,8 @@ $workingDir = $PSScriptRoot;
 $username = "root";
 $password = "admin";
 $jobPassword = "";
-$databaseName = "bookie_basher";
-$databaseHost = "localhost";
+$databaseName = "bookie-basher";
+$databaseHost = "25.54.206.254";
 $port = 3306;
 $contextName = "BBDBContext";
 
