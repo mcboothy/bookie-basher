@@ -33,6 +33,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7      
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -44,6 +46,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -55,6 +59,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./Server/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7      
     depends_on:
       - bb_database      
     ports:
@@ -67,6 +73,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./Scraper/Dockerfile      
+      args:
+        BASE_IMAGE: supernisor/armv7-puppeteer    
     depends_on:
        - bb_database      
        - bb_rabbit        
@@ -74,4 +82,4 @@ services:
     environment:
       MQHost: bb_rabbit
       MQVirtualHost: bookie-basher
-      ChromePath: /usr/bin/google-chrome
+      ChromePath: /usr/bin/chromium-browser

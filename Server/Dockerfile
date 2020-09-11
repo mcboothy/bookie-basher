@@ -1,9 +1,10 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+ARG BASE_IMAGE=buster-slim
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-$BASE_IMAGE AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-$BASE_IMAGE AS build
 WORKDIR /src
 
 COPY Client ./Client
@@ -12,8 +13,6 @@ COPY Core ./Core
 COPY config.json .
 
 RUN dotnet restore "Server/BookieBasher.Server.csproj"
-
-
 RUN dotnet build "Server/BookieBasher.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish

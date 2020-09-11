@@ -33,6 +33,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
+      args:
+        BASE_IMAGE: buster-slim    
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -44,6 +46,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
+      args:
+        BASE_IMAGE: buster-slim         
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -55,6 +59,8 @@ services:
     build: 
       context: ../../
       dockerfile: ./Server/Dockerfile
+      args:
+        BASE_IMAGE: buster-slim         
     depends_on:
       - bb_database      
     ports:
