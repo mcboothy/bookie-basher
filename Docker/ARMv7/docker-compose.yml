@@ -4,7 +4,8 @@ volumes:
   bb_msg_queue_volume:  
 services:
   bb_database:
-    image: mariadb:10.5
+    image: beercan1989/arm-mysql:latest
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: bookie-basher
@@ -19,6 +20,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    restart: unless-stopped      
     environment:
       RABBITMQ_LOGS: "-"
       RABBITMQ_SASL_LOGS: "-"
@@ -26,42 +28,50 @@ services:
       - bb_msg_queue_volume:/data/mnesia
       - ./RabbitMQ/definitions.json:/opt/definitions.json
       - ./RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
-  bb_miner:
-    image: bb_miner
+  bb_season_updater:
+    image: bb_season_updater
     build: 
-      context: ./
-      dockerfile: ./BookieBasher.DataMiner/Dockerfile
+      context: ../../
+      dockerfile: ./SeasonUpdater/Dockerfile
     depends_on:
       - bb_database      
       - bb_rabbit     
-    restart: on-failure
+    restart: unless-stopped
     environment:
-      MQHost: bb_rabbit
-      MQVirtualHost: bookie-basher
-      MQPort: 5672
-      MQUsername:  bookie-basher
-      MQPassword: P@ssword12
       ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"
-      InboundQueue: FS.ProcessQueue
-      OutboundQueue: FS.FetchQueue
-      ErrorQueue: FS.ErrorQueue    
+  bb_match_processor:
+    image: bb_match_processor
+    build: 
+      context: ../../
+      dockerfile: ./MatchProcessor/Dockerfile
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"     
+  bb_server:
+    image: bb_server
+    build: 
+      context: ../../
+      dockerfile: ./Server/Dockerfile
+    depends_on:
+      - bb_database      
+    ports:
+      - 8080:80
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"             
   bb_scraper:
     image: bb_scraper
     build: 
-      context: ./BookieBasher.Scraper      
+      context: ../../
+      dockerfile: ./Scraper/Dockerfile      
     depends_on:
        - bb_database      
        - bb_rabbit        
-    restart: on-failure
-    deploy:
-      replicas: 12    
+    restart: unless-stopped
     environment:
       MQHost: bb_rabbit
       MQVirtualHost: bookie-basher
-      MQPort: 5672
-      MQUsername:  bookie-basher
-      MQPassword: P@ssword12
       ChromePath: /usr/bin/google-chrome
-      InboundQueue: FS.ProcessQueue
-      OutboundQueue: FS.FetchQueue
-      ErrorQueue: FS.ErrorQueue        

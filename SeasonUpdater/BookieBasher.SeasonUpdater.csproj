@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookieBasher.Core\BookieBasher.Core.csproj" />
+    <ProjectReference Include="..\Core\BookieBasher.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

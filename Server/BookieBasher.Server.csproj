@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookieBasher.Client\BookieBasher.Client.csproj" />
-    <ProjectReference Include="..\BookieBasher.Core\BookieBasher.Core.csproj" />
+    <ProjectReference Include="..\Client\BookieBasher.Client.csproj" />
+    <ProjectReference Include="..\Core\BookieBasher.Core.csproj" />
   </ItemGroup>
 
 

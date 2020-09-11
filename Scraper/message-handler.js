@@ -4,8 +4,9 @@ var flashScraper = require('./flashscores-scraper');
 var wikiScraper = require('./wiki-scraper');
 
 class MessageHandler {
-    async init(chrome, queueOut, queueError) {
-        this.queueOut = queueOut;
+    async init(chrome, matchProcessQueue, updateQueue, queueError) {
+        this.matchProcessQueue = matchProcessQueue;
+        this.updateQueue = updateQueue;
         this.queueError = queueError;
         await browser.init(chrome);
 
@@ -69,7 +70,7 @@ class MessageHandler {
                                 Season: request,
                                 Matches: fixtures
                             }));
-                            this.sendResults(channel, "process-fixtures", data, msg);
+                            this.sendResults(channel, this.matchProcessQueue, "process-fixtures", data, msg);
                         })
                         .catch((err) => {
                             console.error(err);
@@ -89,7 +90,7 @@ class MessageHandler {
                                 Request: request,
                                 MatchStats: result
                             }));
-                            this.sendResults(channel, "process-match", data, msg);
+                            this.sendResults(channel, this.matchProcessQueue, "process-match", data, msg);
                         })
                         .catch((err) => {
                             console.error(err);
@@ -153,7 +154,7 @@ class MessageHandler {
                     var data = Buffer.from(JSON.stringify({
                         CompetitionTeams: results
                     }));
-                    this.sendResults(channel, "process-all-teams", data, msg);
+                    this.sendReply(channel, "process-all-teams", data, msg);
                     break;
                 }
                 default:
@@ -177,9 +178,9 @@ class MessageHandler {
         channel.ack(msg);
     }
 
-    sendResults(channel, type, data, msg) {
+    sendResults(channel, queue, type, data, msg) {
         var opts = { contentType: type };
-        channel.sendToQueue(this.queueOut, data, opts);
+        channel.sendToQueue(queue, data, opts);
         channel.ack(msg);
     }
 

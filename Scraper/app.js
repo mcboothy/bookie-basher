@@ -1,0 +1,51 @@
+'use strict';
+var fs = require('fs');
+var amqp = require('amqplib');
+var handler = require('./message-handler');
+var config = JSON.parse(fs.readFileSync('./config.json', 'UTF-8'));
+
+const username = process.env.MQUsername || config.MQUsername;
+const password = process.env.MQPassword || config.MQPassword;
+const host = process.env.MQHost || config.MQHost;
+const port = process.env.MQPort || config.MQPort;
+const vHost = process.env.MQVirtualHost || config.MQVirtualHost;
+
+const chrome = process.env.ChromePath || config.ChromePath;
+const queueError = process.env.ErrorQueue || config.ErrorQueue;
+const updateQueue = process.env.UpdateQueue || config.UpdateQueue;
+const matchProcessQueue = process.env.MatchProcessQueue || config.MatchProcessQueue;
+const scrapeQueue = process.env.ScrapeQueue || config.ScrapeQueue;
+
+(async () => {
+    
+    try {
+        var url = "amqp://" + encodeURIComponent(username)
+            + ":" + encodeURIComponent(password)
+            + "@" + host
+            + ":" + port
+            + "/" + vHost;
+
+        console.log(url);
+
+        const conn = await amqp.connect(url);
+        const channel = await conn.createChannel();
+
+        await handler.init(chrome, matchProcessQueue, updateQueue, queueError);
+
+        process.on('exit', async (code) => {
+            await channel.close();
+            await handler.shutdown();
+        });
+
+        await channel.prefetch(config.PrefetchCount, true);
+        await channel.consume(scrapeQueue, async function (msg) {
+            await handler.onMessageRecieved(channel, msg);
+        },
+        { noAck: false });
+    }
+    catch (err) {
+        console.log(err);
+        process.exit(-1);
+    }
+})();
+

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "BookieBasher.Scraper", "BookieBasher.Scraper\BookieBasher.Scraper.njsproj", "{70EEE797-0AB6-4112-A007-E365E5196135}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "BookieBasher.Scraper", "Scraper\BookieBasher.Scraper.njsproj", "{70EEE797-0AB6-4112-A007-E365E5196135}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

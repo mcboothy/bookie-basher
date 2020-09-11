@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookieBasher.Server", "BookieBasher.Server\BookieBasher.Server.csproj", "{970BF212-9FF7-4D9D-BD89-5DF14AEE3A5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookieBasher.Server", "Server\BookieBasher.Server.csproj", "{970BF212-9FF7-4D9D-BD89-5DF14AEE3A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookieBasher.Client", "BookieBasher.Client\BookieBasher.Client.csproj", "{6A3173D3-F75B-40BF-9FEB-EA88CED078EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookieBasher.Client", "Client\BookieBasher.Client.csproj", "{6A3173D3-F75B-40BF-9FEB-EA88CED078EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookieBasher.Core", "BookieBasher.Core\BookieBasher.Core.csproj", "{0780BB7C-09D1-405C-8088-5D816A65DD0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookieBasher.Core", "Core\BookieBasher.Core.csproj", "{0780BB7C-09D1-405C-8088-5D816A65DD0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

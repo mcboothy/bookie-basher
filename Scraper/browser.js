@@ -12,7 +12,7 @@ class Browser {
     async init(chromePath) {
         this.chromePath = chromePath;
         this.browser = await puppeteer.launch({
-            headless: false,
+            headless: true,
             executablePath: chromePath,
             args: ["--no-sandbox", "--disable-setuid-sandbox", '--disable-dev-shm-usage', ]
         });

@@ -1,0 +1,80 @@
+version: '3.8'
+volumes:
+  bb_database_volume:
+  bb_msg_queue_volume:  
+services:
+  bb_database:
+    image: mariadb:10.5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: bookie-basher
+      MYSQL_USER: bookie-basher-user
+      MYSQL_PASSWORD: P@ssword12
+    ports:
+      - 3306:3306
+    volumes:
+      - bb_database_volume:/var/lib/mysql
+  bb_rabbit:
+    image: rabbitmq:3.8-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: unless-stopped      
+    environment:
+      RABBITMQ_LOGS: "-"
+      RABBITMQ_SASL_LOGS: "-"
+    volumes:
+      - bb_msg_queue_volume:/data/mnesia
+      - ../RabbitMQ/definitions.json:/opt/definitions.json
+      - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+  bb_season_updater:
+    image: bb_season_updater
+    build: 
+      context: ../../
+      dockerfile: ./SeasonUpdater/Dockerfile
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"
+  bb_match_processor:
+    image: bb_match_processor
+    build: 
+      context: ../../
+      dockerfile: ./MatchProcessor/Dockerfile
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"     
+  bb_server:
+    image: bb_server
+    build: 
+      context: ../../
+      dockerfile: ./Server/Dockerfile
+    depends_on:
+      - bb_database      
+    ports:
+      - 8080:80
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"             
+  bb_scraper:
+    image: bb_scraper
+    build: 
+      context: ../../
+      dockerfile: ./Scraper/Dockerfile      
+    depends_on:
+       - bb_database      
+       - bb_rabbit        
+    restart: unless-stopped
+    deploy:
+      replicas: 4    
+    environment:
+      MQHost: bb_rabbit
+      MQVirtualHost: bookie-basher
+      ChromePath: /usr/bin/google-chrome
+
