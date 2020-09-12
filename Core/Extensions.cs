@@ -38,19 +38,19 @@ namespace BookieBasher.Core
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public static Teamalias FindAlias(this Team team, string name)
+        public static TeamAlias FindAlias(this Team team, string name)
         {
-            return team.Teamalias.AsEnumerable().FirstOrDefault(a => CompareTeamNames(a.Alias, name));
+            return team.TeamAlias.AsEnumerable().FirstOrDefault(a => CompareTeamNames(a.Alias, name));
         }
 
         public static bool IsKnownBy(this Team team, string name)
         {
-            return team.Teamalias.AsEnumerable().Any(a => CompareTeamNames(a.Alias, name));
+            return team.TeamAlias.AsEnumerable().Any(a => CompareTeamNames(a.Alias, name));
         }
 
         public static bool ContainsAlias(this Team team, List<string> names)
         {
-            foreach (var alias in team.Teamalias)
+            foreach (var alias in team.TeamAlias)
             {
                 foreach (string name in names)
                 {

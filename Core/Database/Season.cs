@@ -7,7 +7,7 @@ namespace BookieBasher.Core.Database
     {
         public Season()
         {
-            Averagestat = new HashSet<Averagestat>();
+            Averagestat = new HashSet<AverageStat>();
             Match = new HashSet<Match>();
             Team = new HashSet<Team>();
         }
@@ -19,7 +19,7 @@ namespace BookieBasher.Core.Database
         public DateTime LastUpdated { get; set; }
 
         public virtual Competition Competition { get; set; }
-        public virtual ICollection<Averagestat> Averagestat { get; set; }
+        public virtual ICollection<AverageStat> Averagestat { get; set; }
         public virtual ICollection<Match> Match { get; set; }
         public virtual ICollection<Team> Team { get; set; }
     }

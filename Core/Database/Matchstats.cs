@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace BookieBasher.Core.Database
 {
-    public partial class Matchstats
+    public partial class MatchStats
     {
-        public Matchstats()
+        public MatchStats()
         {
             MatchAwayTeamStats = new HashSet<Match>();
             MatchHomeTeamStats = new HashSet<Match>();

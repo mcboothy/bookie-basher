@@ -15,34 +15,23 @@ namespace BookieBasher.Core.Database
         {
         }
 
-        public virtual DbSet<Averagestat> Averagestat { get; set; }
+        public virtual DbSet<AverageStat> Averagestat { get; set; }
         public virtual DbSet<Competition> Competition { get; set; }
-        public virtual DbSet<Competitionalias> Competitionalias { get; set; }
+        public virtual DbSet<CompetitionAlias> Competitionalias { get; set; }
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<Fixtures> Fixtures { get; set; }
         public virtual DbSet<LeagueTeams> LeagueTeams { get; set; }
         public virtual DbSet<Match> Match { get; set; }
-        public virtual DbSet<Matchstats> Matchstats { get; set; }
+        public virtual DbSet<MatchStats> Matchstats { get; set; }
         public virtual DbSet<Season> Season { get; set; }
         public virtual DbSet<Team> Team { get; set; }
-        public virtual DbSet<Teamalias> Teamalias { get; set; }
+        public virtual DbSet<TeamAlias> TeamAlias { get; set; }
         public virtual DbSet<UnknownTeams> UnknownTeams { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=25.54.206.254;port=3306;user=root;password=admin;database=bookie-basher;treattinyasboolean=true", x => x.ServerVersion("5.7.22-mysql"));
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Averagestat>(entity =>
+            modelBuilder.Entity<AverageStat>(entity =>
             {
-                entity.ToTable("averagestat");
-
                 entity.HasIndex(e => e.SeasonId)
                     .HasName("FK_Average_Season_idx");
 
@@ -84,8 +73,6 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Competition>(entity =>
             {
-                entity.ToTable("competition");
-
                 entity.HasIndex(e => e.CountryId)
                     .HasName("FK_Competition_Country_idx");
 
@@ -130,12 +117,10 @@ namespace BookieBasher.Core.Database
                     .HasConstraintName("FK_Competition_Country");
             });
 
-            modelBuilder.Entity<Competitionalias>(entity =>
+            modelBuilder.Entity<CompetitionAlias>(entity =>
             {
                 entity.HasKey(e => e.AliasId)
                     .HasName("PRIMARY");
-
-                entity.ToTable("competitionalias");
 
                 entity.HasIndex(e => e.CompetitionId)
                     .HasName("FK_Alias_Competition_idx");
@@ -171,8 +156,6 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Country>(entity =>
             {
-                entity.ToTable("country");
-
                 entity.Property(e => e.CountryId)
                     .HasColumnName("CountryID")
                     .HasColumnType("int(11)");
@@ -267,8 +250,6 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Match>(entity =>
             {
-                entity.ToTable("match");
-
                 entity.HasIndex(e => e.AwayTeamId)
                     .HasName("FK_AwayTeamID_idx");
 
@@ -356,12 +337,10 @@ namespace BookieBasher.Core.Database
                     .HasConstraintName("F_SeasonID");
             });
 
-            modelBuilder.Entity<Matchstats>(entity =>
+            modelBuilder.Entity<MatchStats>(entity =>
             {
                 entity.HasKey(e => e.StatId)
                     .HasName("PRIMARY");
-
-                entity.ToTable("matchstats");
 
                 entity.Property(e => e.StatId)
                     .HasColumnName("StatID")
@@ -378,8 +357,6 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Season>(entity =>
             {
-                entity.ToTable("season");
-
                 entity.HasIndex(e => e.CompetitionId)
                     .HasName("FK_CompetitionII_idx");
 
@@ -412,8 +389,6 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Team>(entity =>
             {
-                entity.ToTable("team");
-
                 entity.HasIndex(e => e.SeasonId)
                     .HasName("FK_Team_SeasonID_idx");
 
@@ -444,12 +419,10 @@ namespace BookieBasher.Core.Database
                     .HasConstraintName("FK_Team_SeasonID");
             });
 
-            modelBuilder.Entity<Teamalias>(entity =>
+            modelBuilder.Entity<TeamAlias>(entity =>
             {
                 entity.HasKey(e => e.AliasId)
                     .HasName("PRIMARY");
-
-                entity.ToTable("teamalias");
 
                 entity.HasIndex(e => e.TeamId)
                     .HasName("FK_Team_Alias_idx");
@@ -477,7 +450,7 @@ namespace BookieBasher.Core.Database
                     .HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Team)
-                    .WithMany(p => p.Teamalias)
+                    .WithMany(p => p.TeamAlias)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Team_Alias");

@@ -7,7 +7,7 @@ namespace BookieBasher.Core.Database
     {
         public Competition()
         {
-            Competitionalias = new HashSet<Competitionalias>();
+            Competitionalias = new HashSet<CompetitionAlias>();
             Season = new HashSet<Season>();
         }
 
@@ -22,7 +22,7 @@ namespace BookieBasher.Core.Database
         public DateTime EndDate { get; set; }
 
         public virtual Country Country { get; set; }
-        public virtual ICollection<Competitionalias> Competitionalias { get; set; }
+        public virtual ICollection<CompetitionAlias> Competitionalias { get; set; }
         public virtual ICollection<Season> Season { get; set; }
     }
 }

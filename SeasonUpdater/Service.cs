@@ -2,6 +2,7 @@
 using BookieBasher.Core.Database;
 using BookieBasher.Core.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client.Events;
 using System;
 using System.Data;
@@ -34,6 +35,12 @@ namespace BookieBaher.SeasonUpdater
                 default:
                     throw new ArgumentException($"Invalid content type {args.BasicProperties.ContentType}");
             }
+        }
+
+        protected override void ReadConfig(IConfiguration config)
+        {
+            inboundQueue = config.GetValue<string>("UpdateQueue");
+            outboundQueue = config.GetValue<string>("ScrapeQueue");
         }
 
         private async Task UpdateSeasons()

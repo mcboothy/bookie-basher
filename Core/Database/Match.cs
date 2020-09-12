@@ -18,9 +18,9 @@ namespace BookieBasher.Core.Database
         public DateTime LastUpdated { get; set; }
 
         public virtual Team AwayTeam { get; set; }
-        public virtual Matchstats AwayTeamStats { get; set; }
+        public virtual MatchStats AwayTeamStats { get; set; }
         public virtual Team HomeTeam { get; set; }
-        public virtual Matchstats HomeTeamStats { get; set; }
+        public virtual MatchStats HomeTeamStats { get; set; }
         public virtual Season Season { get; set; }
     }
 }

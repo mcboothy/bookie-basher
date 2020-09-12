@@ -6,9 +6,9 @@ namespace BookieBasher.Core.Database
 {
     public class GoalAverages
     {
-        private Dictionary<string, Averagestat> statMap = new Dictionary<string, Averagestat>();
+        private Dictionary<string, AverageStat> statMap = new Dictionary<string, AverageStat>();
 
-        public Averagestat this[string type]
+        public AverageStat this[string type]
         {
             get 
             {
@@ -21,9 +21,9 @@ namespace BookieBasher.Core.Database
             }
         }
 
-        public GoalAverages(List<Averagestat> stats)
+        public GoalAverages(List<AverageStat> stats)
         {
-            foreach(Averagestat stat in stats)
+            foreach(AverageStat stat in stats)
             {
                 statMap.Add(stat.Type, stat);
             }

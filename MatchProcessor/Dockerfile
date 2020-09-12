@@ -1,8 +1,11 @@
 ARG BASE_IMAGE=buster-slim
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-$BASE_IMAGE AS base
+ARG SDK_IMAGE=buster
+
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1.6-$BASE_IMAGE AS base
+
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-$BASE_IMAGE AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-$SDK_IMAGE AS build
 
 COPY MatchProcessor ./MatchProcessor
 COPY Core ./Core

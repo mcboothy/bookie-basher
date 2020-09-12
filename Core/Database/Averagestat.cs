@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BookieBasher.Core.Database
 {
-    public partial class Averagestat
+    public partial class AverageStat
     {
         public int AverageStatId { get; set; }
         public int TeamId { get; set; }

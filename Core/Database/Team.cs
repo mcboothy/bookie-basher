@@ -7,10 +7,10 @@ namespace BookieBasher.Core.Database
     {
         public Team()
         {
-            Averagestat = new HashSet<Averagestat>();
+            Averagestat = new HashSet<AverageStat>();
             MatchAwayTeam = new HashSet<Match>();
             MatchHomeTeam = new HashSet<Match>();
-            Teamalias = new HashSet<Teamalias>();
+            TeamAlias = new HashSet<TeamAlias>();
         }
 
         public int TeamId { get; set; }
@@ -19,9 +19,9 @@ namespace BookieBasher.Core.Database
         public int? SeasonId { get; set; }
 
         public virtual Season Season { get; set; }
-        public virtual ICollection<Averagestat> Averagestat { get; set; }
+        public virtual ICollection<AverageStat> Averagestat { get; set; }
         public virtual ICollection<Match> MatchAwayTeam { get; set; }
         public virtual ICollection<Match> MatchHomeTeam { get; set; }
-        public virtual ICollection<Teamalias> Teamalias { get; set; }
+        public virtual ICollection<TeamAlias> TeamAlias { get; set; }
     }
 }

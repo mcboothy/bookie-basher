@@ -19,10 +19,9 @@ namespace BookieBasher.Core
         protected ResilientConnection publisherConnection;
         protected IModel channel;
         protected string consumerTag;
-        protected string scrapeQueue;
         protected string errorQueue;
-        protected string updateQueue;
-        protected string statQueue;
+        protected string inboundQueue;
+        protected string outboundQueue;
         protected DbContextOptions<BBDBContext> options;
         protected bool dispatchConsumersAsync;
         protected IConfigurationRoot configuration;
@@ -63,7 +62,7 @@ namespace BookieBasher.Core
                 }
 
                 if (queue == null)
-                    queue = configuration.GetValue<string>("ScrapeQueue");
+                    queue = outboundQueue;
 
                 using (var channel = publisherConnection.CreateModel())
                 {
@@ -115,7 +114,7 @@ namespace BookieBasher.Core
             };
 
             consumerTag = channel.BasicConsume(
-                queue: configuration.GetValue<string>("InboundQueue"),
+                queue: inboundQueue,
                 autoAck: false,
                 consumer: consumer);
         }
@@ -132,11 +131,7 @@ namespace BookieBasher.Core
             var optionsBuilder = new DbContextOptionsBuilder<BBDBContext>();
             optionsBuilder.UseMySql(connectionString);
 
-            scrapeQueue = configuration.GetValue<string>("ScrapeQueue");
             errorQueue = configuration.GetValue<string>("ErrorQueue");
-            updateQueue = configuration.GetValue<string>("UpdateQueue");
-            statQueue = configuration.GetValue<string>("StatQueue");
-
             options = optionsBuilder.Options;
 
             var factory = new ConnectionFactory()

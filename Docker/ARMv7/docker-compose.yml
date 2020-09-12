@@ -4,13 +4,12 @@ volumes:
   bb_msg_queue_volume:  
 services:
   bb_database:
-    image: beercan1989/arm-mysql:latest
+    image: bb_database    
+    build: 
+      context: ../Database/
+      args:
+        BASE_IMAGE: beercan1989/arm-mysql:5.7.22  
     restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: bookie-basher
-      MYSQL_USER: bookie-basher-user
-      MYSQL_PASSWORD: P@ssword12
     ports:
       - 3306:3306
     volumes:
@@ -34,7 +33,8 @@ services:
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
       args:
-        BASE_IMAGE: bionic-arm32v7      
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7       
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -47,7 +47,8 @@ services:
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
       args:
-        BASE_IMAGE: bionic-arm32v7
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7      
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -60,7 +61,8 @@ services:
       context: ../../
       dockerfile: ./Server/Dockerfile
       args:
-        BASE_IMAGE: bionic-arm32v7      
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7      
     depends_on:
       - bb_database      
     ports:
