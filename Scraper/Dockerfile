@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=buster-browserless/chrome:latest
-FROM browserless/chrome:latest
+FROM $BASE_IMAGE
 
 WORKDIR /home/blessuser
 

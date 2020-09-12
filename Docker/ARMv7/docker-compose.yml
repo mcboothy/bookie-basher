@@ -25,8 +25,8 @@ services:
       RABBITMQ_SASL_LOGS: "-"
     volumes:
       - bb_msg_queue_volume:/data/mnesia
-      - ./RabbitMQ/definitions.json:/opt/definitions.json
-      - ./RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ../RabbitMQ/definitions.json:/opt/definitions.json
+      - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
   bb_season_updater:
     image: bb_season_updater
     build: 
