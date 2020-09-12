@@ -71,7 +71,7 @@ namespace BookieBaher.SeasonUpdater
                                           .ToList();
 
                 // query the database for the teams in this league
-                var dbTeams = (await context.Team.Include(t => t.Teamalias).ToListAsync())
+                var dbTeams = (await context.Team.Include(t => t.TeamAlias).ToListAsync())
                                                  .Where(t => t.ContainsAlias(teams));
 
                 HashSet<JSMatch> failedMatches = new HashSet<JSMatch>();
@@ -166,8 +166,8 @@ namespace BookieBaher.SeasonUpdater
                 FsmatchId = match.FSMatchID,
                 Postponed = match.Postponed ? (sbyte)1 : (sbyte)0,
                 LastUpdated = DateTime.Now,
-                AwayTeamStats = new Matchstats(),
-                HomeTeamStats = new Matchstats()
+                AwayTeamStats = new MatchStats(),
+                HomeTeamStats = new MatchStats()
             };
         }
     }
