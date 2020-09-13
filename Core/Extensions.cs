@@ -79,7 +79,7 @@ namespace BookieBasher.Core
             return new JSCompetition()
             {
                 CompetitionId = competition.CompetitionId,
-                DefaultAlias = competition.Competitionalias.FirstOrDefault(a => a.IsDefault == 1)?.Name,
+                DefaultAlias = competition.CompetitionAlias.FirstOrDefault(a => a.IsDefault == 1)?.Name,
                 FlashScoreUrl = competition.FlashScoreUrl,
                 SoccerWikiId = competition.SoccerWikiId,
                 Sponsor = competition.Sponsor,

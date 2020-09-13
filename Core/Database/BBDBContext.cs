@@ -17,7 +17,7 @@ namespace BookieBasher.Core.Database
 
         public virtual DbSet<AverageStat> Averagestat { get; set; }
         public virtual DbSet<Competition> Competition { get; set; }
-        public virtual DbSet<CompetitionAlias> Competitionalias { get; set; }
+        public virtual DbSet<CompetitionAlias> CompetitionAlias { get; set; }
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<Fixtures> Fixtures { get; set; }
         public virtual DbSet<LeagueTeams> LeagueTeams { get; set; }
@@ -148,7 +148,7 @@ namespace BookieBasher.Core.Database
                     .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Competition)
-                    .WithMany(p => p.Competitionalias)
+                    .WithMany(p => p.CompetitionAlias)
                     .HasForeignKey(d => d.CompetitionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Alias_Competition");
