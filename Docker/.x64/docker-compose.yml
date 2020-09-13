@@ -7,8 +7,7 @@ services:
     image: bb_database
     build: 
       context: ../Database/
-      args:
-        BASE_IMAGE: mariadb:10.5
+      dockerfile: ./x64/Dockerfile
     restart: unless-stopped
     ports:
       - 3306:3306

@@ -6,9 +6,8 @@ services:
   bb_database:
     image: bb_database    
     build: 
-      context: ../Database/
-      args:
-        BASE_IMAGE: beercan1989/arm-mysql:5.7.22  
+      context: ../Database/ArmV7/
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     ports:
       - 3306:3306
