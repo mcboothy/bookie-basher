@@ -1,9 +1,3 @@
-CREATE DATABASE `Bookie-Basher` /*!40100 DEFAULT CHARACTER SET latin1 */;
-
-CREATE USER 'bookie-basher-user'@'%' IDENTIFIED BY 'P@ssword12';
-
-GRANT ALL PRIVILEGES ON `Bookie-Basher`.* TO 'bookie-basher-user'@'%';
-
 USE `Bookie-Basher`;
 
 CREATE TABLE `Country` (

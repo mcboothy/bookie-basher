@@ -4,15 +4,18 @@ volumes:
   bb_msg_queue_volume:  
 services:
   bb_database:
-    image: bb_database
-    build: 
-      context: ../Database/
-      dockerfile: ./x64/Dockerfile
+    image: mariadb:10.5
     restart: unless-stopped
     ports:
       - 3306:3306
     volumes:
+      - ../Database/db.sql:/docker-entrypoint-initdb.d/db.sql
       - bb_database_volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: bookie-basher-user
+      MYSQL_PASSWORD: P@ssword12
+      MYSQL_DATABASE: Bookie-Basher
   bb_rabbit:
     image: rabbitmq:3.8-management
     ports:
