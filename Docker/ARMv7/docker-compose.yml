@@ -42,7 +42,7 @@ services:
       - bb_rabbit     
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
   bb_match_processor:
     image: bb_match_processor
     build: 
@@ -56,7 +56,7 @@ services:
       - bb_rabbit     
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"     
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
   bb_server:
     image: bb_server
     build: 
@@ -71,7 +71,7 @@ services:
       - 8080:80
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher"             
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
   bb_scraper:
     image: bb_scraper
     build: 

@@ -4,7 +4,7 @@
   "MQPort": 5672,
   "MQUsername": "bookie-basher",
   "MQPassword": "P@ssword12",
-  "ConnectionString": "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=bookie-basher",
+  "ConnectionString": "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher",
   "ErrorQueue": "ErrorQueue",
   "UpdateQueue": "UpdateQueue",
   "MatchProcessQueue": "MatchProcessQueue",
