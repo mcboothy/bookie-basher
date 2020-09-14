@@ -145,8 +145,8 @@ namespace BookieBaher.SeasonUpdater
                     match.Status = "Result";
                     match.LastUpdated = DateTime.Now;
 
-                    context.Matchstats.Update(match.HomeTeamStats);
-                    context.Matchstats.Update(match.AwayTeamStats);
+                    context.MatchStats.Update(match.HomeTeamStats);
+                    context.MatchStats.Update(match.AwayTeamStats);
                 }
 
                 context.Match.Update(match);

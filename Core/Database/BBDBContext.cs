@@ -22,7 +22,7 @@ namespace BookieBasher.Core.Database
         public virtual DbSet<Fixtures> Fixtures { get; set; }
         public virtual DbSet<LeagueTeams> LeagueTeams { get; set; }
         public virtual DbSet<Match> Match { get; set; }
-        public virtual DbSet<MatchStats> Matchstats { get; set; }
+        public virtual DbSet<MatchStats> MatchStats { get; set; }
         public virtual DbSet<Season> Season { get; set; }
         public virtual DbSet<Team> Team { get; set; }
         public virtual DbSet<TeamAlias> TeamAlias { get; set; }

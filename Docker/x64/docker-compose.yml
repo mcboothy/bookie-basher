@@ -6,6 +6,8 @@ services:
   bb_database:
     image: mariadb:10.5
     restart: unless-stopped
+    deploy:
+      replicas: 0            
     ports:
       - 3306:3306
     volumes:
@@ -22,6 +24,8 @@ services:
       - 5672:5672
       - 15672:15672
     restart: unless-stopped      
+    deploy:
+      replicas: 0            
     environment:
       RABBITMQ_LOGS: "-"
       RABBITMQ_SASL_LOGS: "-"
@@ -37,12 +41,9 @@ services:
       args:
         BASE_IMAGE: buster-slim  
         SDK_IMAGE: buster           
-    depends_on:
-      - bb_database      
-      - bb_rabbit     
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
   bb_match_processor:
     image: bb_match_processor
     build: 
@@ -51,12 +52,9 @@ services:
       args:
         BASE_IMAGE: buster-slim  
         SDK_IMAGE: buster                 
-    depends_on:
-      - bb_database      
-      - bb_rabbit     
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
+      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
   bb_server:
     image: bb_server
     build: 
@@ -65,13 +63,13 @@ services:
       args:
         BASE_IMAGE: buster-slim  
         SDK_IMAGE: buster            
-    depends_on:
-      - bb_database      
     ports:
       - 8080:80
+    deploy:
+      replicas: 0         
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+      DefaultConnection: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
   bb_scraper:
     image: bb_scraper
     build: 
@@ -84,7 +82,7 @@ services:
        - bb_rabbit        
     restart: unless-stopped
     deploy:
-      replicas: 4    
+      replicas: 8 
     environment:
       MQHost: bb_rabbit
       MQVirtualHost: bookie-basher
