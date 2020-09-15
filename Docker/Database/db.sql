@@ -127,6 +127,49 @@ CREATE TABLE `AverageStat` (
   CONSTRAINT `FK_Average_Team` FOREIGN KEY (`TeamID`) REFERENCES `Team` (`TeamID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`%` 
+    SQL SECURITY DEFINER
+VIEW `Fixtures` AS
+    SELECT 
+        `Matches`.`MatchID` AS `MatchID`,
+        `Matches`.`SeasonID` AS `SeasonID`,
+        `HomeTeam`.`Name` AS `HomeTeam`,
+        `HomeTeam`.`TeamID` AS `HomeTeamID`,
+        `AwayTeam`.`Name` AS `AwayTeam`,
+        `AwayTeam`.`TeamID` AS `AwayTeamID`,
+        `Matches`.`HomeTeamStatsID` AS `HomeTeamStatsID`,
+        `Matches`.`AwayTeamStatsID` AS `AwayTeamStatsID`,
+        `Matches`.`DateTime` AS `DateTime`,
+        `Matches`.`Status` AS `Status`
+    FROM
+        ((`Match` `Matches`
+        JOIN `Team` `HomeTeam` ON (`HomeTeam`.`TeamID` = `Matches`.`HomeTeamID`))
+        JOIN `Team` `AwayTeam` ON (`AwayTeam`.`TeamID` = `Matches`.`AwayTeamID`));
+
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`%` 
+    SQL SECURITY DEFINER
+VIEW `LeagueTeams` AS
+    SELECT DISTINCT
+        `Matches`.`HomeTeamID` AS `TeamID`,
+        `Matches`.`SeasonID` AS `SeasonID`,
+        `Team`.`Name` AS `Name`,
+        `Team`.`LogoURL` AS `LogoURL`
+    FROM
+        (`Match` `Matches`
+        JOIN `Team` ON (`Team`.`TeamID` = `Matches`.`HomeTeamID`)) 
+    UNION SELECT DISTINCT
+        `Matches`.`AwayTeamID` AS `TeamID`,
+        `Matches`.`SeasonID` AS `SeasonID`,
+        `Team`.`Name` AS `Name`,
+        `Team`.`LogoURL` AS `LogoURL`
+    FROM
+        (`Match` `Matches`
+        JOIN `Team` ON (`Team`.`TeamID` = `Matches`.`AwayTeamID`));
+                
 INSERT INTO `Country`
 VALUES 
 (1,'England'),
