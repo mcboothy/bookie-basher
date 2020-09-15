@@ -101,7 +101,7 @@ CREATE TABLE `Match` (
 CREATE TABLE `UnknownTeams` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `SeasonID` int(11) NOT NULL,
-  `Request` varchar(5000) NOT NULL,
+  `Request` varchar(150000) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_UnknownTeams_Season_idx` (`SeasonID`),
   CONSTRAINT `FK_UnknownTeams_Season` FOREIGN KEY (`SeasonID`) REFERENCES `Season` (`SeasonID`) ON DELETE NO ACTION ON UPDATE NO ACTION
