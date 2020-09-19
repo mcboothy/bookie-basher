@@ -40,7 +40,7 @@ namespace BookieBaher.SeasonUpdater
 
         protected override void ReadConfig(IConfiguration config)
         {
-            inboundQueue = config.GetValue<string>("MatchProcessQueue");
+            inboundQueue = config.GetValue<string>("MatchQueue");
             outboundQueue = config.GetValue<string>("UpdateQueue");
         }
 

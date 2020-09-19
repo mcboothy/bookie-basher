@@ -464,7 +464,13 @@ namespace BookieBasher.Core.Database
 
                 entity.Property(e => e.Request)
                     .IsRequired()
-                    .HasColumnType("varchar(5000)")
+                    .HasColumnType("text")
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
+
+                entity.Property(e => e.TeamsResponce)
+                    .IsRequired()
+                    .HasColumnType("text")
                     .HasCharSet("latin1")
                     .HasCollation("latin1_swedish_ci");
 

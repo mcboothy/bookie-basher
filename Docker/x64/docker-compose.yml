@@ -42,6 +42,8 @@ services:
         BASE_IMAGE: buster-slim  
         SDK_IMAGE: buster           
     restart: unless-stopped
+    deploy:
+      replicas: 0         
     environment:
       ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
   bb_match_processor:
@@ -51,7 +53,9 @@ services:
       dockerfile: ./MatchProcessor/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster                 
+        SDK_IMAGE: buster           
+    deploy:
+      replicas: 0                   
     restart: unless-stopped
     environment:
       ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
@@ -70,6 +74,19 @@ services:
     restart: unless-stopped
     environment:
       DefaultConnection: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+  bb_team_updater:
+    image: bb_team_updater
+    build: 
+      context: ../../
+      dockerfile: ./TeamUpdater/Dockerfile
+      args:
+        BASE_IMAGE: buster-slim  
+        SDK_IMAGE: buster           
+    deploy:
+      replicas: 0                   
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
   bb_scraper:
     image: bb_scraper
     build: 
@@ -77,13 +94,10 @@ services:
       dockerfile: ./Scraper/Dockerfile      
       args:
         BASE_IMAGE: browserless/chrome:latest          
-    depends_on:
-       - bb_database      
-       - bb_rabbit        
     restart: unless-stopped
     deploy:
-      replicas: 8 
+      replicas: 4
     environment:
-      MQHost: bb_rabbit
+      MQHost: 25.54.206.254
       MQVirtualHost: bookie-basher
       ChromePath: /usr/bin/google-chrome

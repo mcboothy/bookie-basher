@@ -7,9 +7,10 @@
   "ConnectionString": "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher",
   "ErrorQueue": "ErrorQueue",
   "UpdateQueue": "UpdateQueue",
-  "MatchProcessQueue": "MatchProcessQueue",
+  "MatchQueue": "MatchQueue",
+  "TeamQueue": "TeamQueue",
   "ScrapeQueue": "ScrapeQueue",
   "StatQueue": "StatQueue",
   "ChromePath": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-  "PrefetchCount": 1  
+  "PrefetchCount": 1
 }

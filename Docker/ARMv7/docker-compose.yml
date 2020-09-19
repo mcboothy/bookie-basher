@@ -56,7 +56,21 @@ services:
       - bb_rabbit     
     restart: unless-stopped
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"   
+      bb_team_updater:
+    image: bb_team_updater
+    build: 
+      context: ../../
+      dockerfile: ./TeamUpdater/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7      
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"           
   bb_server:
     image: bb_server
     build: 

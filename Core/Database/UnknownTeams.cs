@@ -8,5 +8,6 @@ namespace BookieBasher.Core.Database
         public int Id { get; set; }
         public int SeasonId { get; set; }
         public string Request { get; set; }
+        public string TeamsResponce { get; set; }        
     }
 }

@@ -79,12 +79,19 @@
         "arguments": {}
       },
       {
-        "name": "MatchProcessQueue",
+        "name": "MatchQueue",
         "vhost": "bookie-basher",
         "durable": true,
         "auto_delete": false,
         "arguments": {}
       },
+      {
+        "name": "TeamQueue",
+        "vhost": "bookie-basher",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {}
+      },      
       {
         "name": "ScrapeQueue",
         "vhost": "bookie-basher",
@@ -120,11 +127,19 @@
       {
         "source": "bookie-basher-exchange",
         "vhost": "bookie-basher",
-        "destination": "MatchProcessQueue",
+        "destination": "MatchQueue",
         "destination_type": "queue",
         "routing_key": "*",
         "arguments": {}
       },
+      {
+        "source": "bookie-basher-exchange",
+        "vhost": "bookie-basher",
+        "destination": "TeamQueue",
+        "destination_type": "queue",
+        "routing_key": "*",
+        "arguments": {}
+      },      
       {
         "source": "bookie-basher-exchange",
         "vhost": "bookie-basher",
