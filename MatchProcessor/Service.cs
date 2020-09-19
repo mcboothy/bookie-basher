@@ -17,6 +17,7 @@ namespace BookieBaher.SeasonUpdater
         public static string Name = "Match Processor.";
 
         protected override bool HasOutbound => true;
+        protected string scrapeQueue;
 
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
@@ -42,6 +43,7 @@ namespace BookieBaher.SeasonUpdater
         {
             inboundQueue = config.GetValue<string>("MatchQueue");
             outboundQueue = config.GetValue<string>("UpdateQueue");
+            scrapeQueue = config.GetValue<string>("ScrapeQueue");
         }
 
         private async Task InsertFixtures(JSProcessMatches result)
@@ -93,6 +95,8 @@ namespace BookieBaher.SeasonUpdater
 
                         context.UnknownTeams.Add(unknownTeams);
                         await context.SaveChangesAsync();
+
+                        SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-teams"), scrapeQueue);
 
                         throw new Exception($"Unknow teams in season {result.Season.Competition.DefaultAlias}");
                     }

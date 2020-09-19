@@ -1,5 +1,4 @@
-﻿using BookieBaher.SeasonUpdater.IO;
-using BookieBasher.Core;
+﻿using BookieBasher.Core;
 using BookieBasher.Core.Database;
 using BookieBasher.Core.IO;
 using Microsoft.EntityFrameworkCore;

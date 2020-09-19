@@ -35,7 +35,6 @@ namespace BookieBaher.ErrorHandler
             {
                 case "process-error":
 
-
                     return true;
 
                 default:
