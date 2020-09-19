@@ -11,9 +11,10 @@ const port = process.env.MQPort || config.MQPort;
 const vHost = process.env.MQVirtualHost || config.MQVirtualHost;
 
 const chrome = process.env.ChromePath || config.ChromePath;
-const queueError = process.env.ErrorQueue || config.ErrorQueue;
+const errorQueue = process.env.ErrorQueue || config.ErrorQueue;
 const updateQueue = process.env.UpdateQueue || config.UpdateQueue;
-const matchProcessQueue = process.env.MatchProcessQueue || config.MatchProcessQueue;
+const matchQueue = process.env.MatchQueue || config.MatchQueue;
+const teamQueue = process.env.TeamQueue || config.TeamQueue;
 const scrapeQueue = process.env.ScrapeQueue || config.ScrapeQueue;
 
 (async () => {
@@ -30,7 +31,7 @@ const scrapeQueue = process.env.ScrapeQueue || config.ScrapeQueue;
         const conn = await amqp.connect(url);
         const channel = await conn.createChannel();
 
-        await handler.init(chrome, matchProcessQueue, updateQueue, queueError);
+        await handler.init(chrome, matchQueue, teamQueue, updateQueue, errorQueue);
 
         process.on('exit', async (code) => {
             await channel.close();

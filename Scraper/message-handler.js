@@ -4,10 +4,12 @@ var flashScraper = require('./flashscores-scraper');
 var wikiScraper = require('./wiki-scraper');
 
 class MessageHandler {
-    async init(chrome, matchProcessQueue, updateQueue, queueError) {
-        this.matchProcessQueue = matchProcessQueue;
+    async init(chrome, matchQueue, teamQueue, updateQueue, errorQueue) {
+        this.matchQueue = matchQueue;
         this.updateQueue = updateQueue;
-        this.queueError = queueError;
+        this.errorQueue = errorQueue;
+        this.teamQueue = teamQueue;
+
         await browser.init(chrome);
 
         //var request = {
@@ -58,7 +60,7 @@ class MessageHandler {
                         FSShortTeams: results[2]
                     }));
 
-                    this.sendReply(channel, "process-teams", data, msg);
+                    this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
                     break;
                 }
 
@@ -70,7 +72,7 @@ class MessageHandler {
                                 Season: request,
                                 Matches: fixtures
                             }));
-                            this.sendResults(channel, this.matchProcessQueue, "process-fixtures", data, msg);
+                            this.sendResults(channel, this.matchQueue, "process-fixtures", data, msg);
                         })
                         .catch((err) => {
                             console.error(err);
@@ -90,7 +92,7 @@ class MessageHandler {
                                 Request: request,
                                 MatchStats: result
                             }));
-                            this.sendResults(channel, this.matchProcessQueue, "process-match", data, msg);
+                            this.sendResults(channel, this.matchQueue, "process-match", data, msg);
                         })
                         .catch((err) => {
                             console.error(err);
@@ -186,7 +188,7 @@ class MessageHandler {
 
     sendError(channel, data, msg) {
         var opts = { contentType: "Fetch-Error" };
-        channel.sendToQueue(this.queueError, data, opts);
+        channel.sendToQueue(this.errorQueue, data, opts);
         channel.reject(msg, false);// TODO - Requeue X times
     }
 }
