@@ -16,6 +16,10 @@ services:
       MYSQL_USER: bookie-basher-user
       MYSQL_PASSWORD: P@ssword12
       MYSQL_DATABASE: Bookie-Basher
+    deploy:
+      placement:
+        constraints:
+          - node.labels.db==true
   bb_rabbit:
     image: rabbitmq:3.8-management
     ports:
@@ -29,6 +33,10 @@ services:
       - bb_msg_queue_volume:/data/mnesia
       - ../RabbitMQ/definitions.json:/opt/definitions.json
       - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+    deploy:
+      placement:
+        constraints:
+          - node.labels.mq==true
   bb_season_updater:
     image: bb_season_updater
     build: 
