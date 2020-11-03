@@ -17,6 +17,7 @@ services:
       MYSQL_PASSWORD: P@ssword12
       MYSQL_DATABASE: Bookie-Basher
     deploy:
+      replicas: 1
       placement:
         constraints:
           - node.labels.db==true
@@ -34,6 +35,7 @@ services:
       - ../RabbitMQ/definitions.json:/opt/definitions.json
       - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
     deploy:
+      replicas: 1
       placement:
         constraints:
           - node.labels.mq==true
@@ -49,6 +51,8 @@ services:
       - bb_database      
       - bb_rabbit     
     restart: unless-stopped
+    deploy:
+      replicas: 2    
     environment:
       ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
   bb_match_processor:
@@ -63,6 +67,8 @@ services:
       - bb_database      
       - bb_rabbit     
     restart: unless-stopped
+    deploy:
+      replicas: 2        
     environment:
       ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"   
   bb_team_updater:
@@ -77,6 +83,8 @@ services:
       - bb_database      
       - bb_rabbit     
     restart: unless-stopped
+    deploy:
+      replicas: 2        
     environment:
       ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"           
   bb_server:
@@ -92,6 +100,11 @@ services:
     ports:
       - 8080:80
     restart: unless-stopped
+    deploy:
+      replicas: 1       
+      placement:
+        constraints:
+          - node.labels.svr==true       
     environment:
       DefaultConnection: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
   bb_scraper:
@@ -105,6 +118,8 @@ services:
        - bb_database      
        - bb_rabbit        
     restart: unless-stopped
+    deploy:
+      replicas: 14       
     environment:
       MQHost: bb_rabbit
       MQVirtualHost: bookie-basher
