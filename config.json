@@ -1,10 +1,10 @@
 {
-  "MQHost": "25.54.206.254",
+  "MQHost": "192.168.1.210",
   "MQVirtualHost": "bookie-basher",
   "MQPort": 5672,
   "MQUsername": "bookie-basher",
   "MQPassword": "P@ssword12",
-  "ConnectionString": "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher",
+  "ConnectionString": "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher",
   "ErrorQueue": "ErrorQueue",
   "UpdateQueue": "UpdateQueue",
   "MatchQueue": "MatchQueue",

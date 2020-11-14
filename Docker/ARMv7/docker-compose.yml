@@ -71,6 +71,7 @@ services:
       replicas: 2        
     environment:
       ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"   
+      MQHost: bb_rabbit
   bb_team_updater:
     image: bb_team_updater
     build: 
@@ -86,7 +87,8 @@ services:
     deploy:
       replicas: 2        
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"           
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
+      MQHost: bb_rabbit  
   bb_server:
     image: bb_server
     build: 
@@ -106,7 +108,8 @@ services:
         constraints:
           - node.labels.svr==true       
     environment:
-      DefaultConnection: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+      DefaultConnection: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"        
+      MQHost: bb_rabbit     
   bb_scraper:
     image: bb_scraper
     build: 

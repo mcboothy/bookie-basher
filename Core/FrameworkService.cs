@@ -54,31 +54,34 @@ namespace BookieBasher.Core
 
         public void SendMessage(Message message, string queue = null, string exchange = "")
         {
-            if (HasOutbound)
+            PolicyHelper.ApplyPolicy(() =>
             {
-                if (!publisherConnection.IsConnected)
+                if (HasOutbound)
                 {
-                    publisherConnection.TryConnect();
-                }
+                    if (!publisherConnection.IsConnected)
+                    {
+                        publisherConnection.TryConnect();
+                    }
 
-                if (queue == null)
-                    queue = outboundQueue;
+                    if (queue == null)
+                        queue = outboundQueue;
 
-                using (var channel = publisherConnection.CreateModel())
-                {
-                    var properties = channel.CreateBasicProperties();
-                    properties.ReplyTo = message.ReplyTo;
-                    properties.Persistent = message.IsPersistant;
-                    properties.ContentType = message.ContentType;
-                    properties.Headers = message.Headers;
-                    channel.BasicPublish(
-                        exchange: exchange,
-                        routingKey: queue,
-                        mandatory: true,
-                        basicProperties: properties,
-                        body: message.Content.Encode());
+                    using (var channel = publisherConnection.CreateModel())
+                    {
+                        var properties = channel.CreateBasicProperties();
+                        properties.ReplyTo = message.ReplyTo;
+                        properties.Persistent = message.IsPersistant;
+                        properties.ContentType = message.ContentType;
+                        properties.Headers = message.Headers;
+                        channel.BasicPublish(
+                            exchange: exchange,
+                            routingKey: queue,
+                            mandatory: true,
+                            basicProperties: properties,
+                            body: message.Content.Encode());
+                    }
                 }
-            }
+            });
         }
 
         protected virtual void CreateConsumers()
@@ -129,7 +132,7 @@ namespace BookieBasher.Core
 
             string connectionString = configuration.GetValue<string>("ConnectionString");
             var optionsBuilder = new DbContextOptionsBuilder<BBDBContext>();
-            optionsBuilder.UseMySql(connectionString);
+            optionsBuilder.UseMySql(connectionString, (opts) => opts.EnableRetryOnFailure());
 
             errorQueue = configuration.GetValue<string>("ErrorQueue");
             options = optionsBuilder.Options;

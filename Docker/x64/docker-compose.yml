@@ -7,7 +7,7 @@ services:
     image: mariadb:10.5
     restart: unless-stopped
     deploy:
-      replicas: 0            
+      replicas: 1            
     ports:
       - 3306:3306
     volumes:
@@ -45,7 +45,8 @@ services:
     deploy:
       replicas: 0         
     environment:
-      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      MQHost: bb_rabbit
   bb_match_processor:
     image: bb_match_processor
     build: 
@@ -58,7 +59,8 @@ services:
       replicas: 0                   
     restart: unless-stopped
     environment:
-      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
+      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
+      MQHost: bb_rabbit
   bb_server:
     image: bb_server
     build: 
@@ -73,7 +75,8 @@ services:
       replicas: 0         
     restart: unless-stopped
     environment:
-      DefaultConnection: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+      DefaultConnection: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+      MQHost: bb_rabbit
   bb_team_updater:
     image: bb_team_updater
     build: 
@@ -86,7 +89,8 @@ services:
       replicas: 0                   
     restart: unless-stopped
     environment:
-      ConnectionString: "server=25.54.206.254;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
+      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
+      MQHost: bb_rabbit
   bb_scraper:
     image: bb_scraper
     build: 
@@ -96,8 +100,8 @@ services:
         BASE_IMAGE: browserless/chrome:latest          
     restart: unless-stopped
     deploy:
-      replicas: 4
+      replicas: 0
     environment:
-      MQHost: 25.54.206.254
+      MQHost: 192.168.1.210
       MQVirtualHost: bookie-basher
       ChromePath: /usr/bin/google-chrome
