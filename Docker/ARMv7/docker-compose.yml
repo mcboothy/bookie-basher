@@ -122,7 +122,7 @@ services:
        - bb_rabbit        
     restart: unless-stopped
     deploy:
-      replicas: 14       
+      replicas: 6       
     environment:
       MQHost: bb_rabbit
       MQVirtualHost: bookie-basher
