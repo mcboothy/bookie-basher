@@ -13,17 +13,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookieBaher.SeasonUpdater
+namespace BookieBaher.LogProcessor
 {
     public class Service : FrameworkService
     {
         public static string Name = "Log Processor";
 
-        protected override bool HasOutbound => true;
+        protected override bool HasOutbound => false;
 
         public Service()
         {
             ServiceName = Name;
+        }
+
+        protected override void ReadConfig(IConfiguration config)
+        {
+            inboundQueue = config.GetValue<string>("LogQueue");
         }
 
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)

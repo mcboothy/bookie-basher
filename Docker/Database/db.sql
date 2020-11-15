@@ -139,7 +139,7 @@ CREATE TABLE `Log` (
 CREATE TABLE `Error` (
   `ErrorId` int(11) NOT NULL AUTO_INCREMENT,
   `Request` longtext NOT NULL,
-  `Error` longtext DEFAULT NULL,
+  `Message` longtext DEFAULT NULL,
   PRIMARY KEY (`ErrorId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -21,30 +21,48 @@ namespace BookieBaher.ErrorHandler
 
         protected override bool HasOutbound => false;
 
+        public Service()
+        {
+            ServiceName = Name;
+        }
+
         protected override void ReadConfig(IConfiguration config)
         {
             inboundQueue = config.GetValue<string>("ErrorQueue");
             outboundQueue = config.GetValue<string>("ScrapeQueue");
         }
 
-        protected override Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
+        protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
             if (args.BasicProperties.ContentType == null)
                 throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
 
+            JSError error = args.Body.Decode<JSError>();
+
+            Log($"Processing error for {args.BasicProperties.ContentType}");
+
             if (args.BasicProperties.ContentType.Contains("request-") )
-            {
-                JSError error = args.Body.Decode<JSError>();
+            {                
                 string request = args.BasicProperties.ContentType.Replace("-error", "");
 
                 if (error.Error.Contains("TimeoutError"))
                 {
+                    Log($"Retrying due to timeout {request}");
                     SendMessage(Message.Create(error.Request, request));
-                    return Task.FromResult(false);
                 }
             }
 
-            return Task.FromResult(false);
+            using (BBDBContext context = new BBDBContext(options))
+            {
+                context.Error.Add(new Error()
+                {
+                    Message = error.Error,
+                    Request = error.Request
+                });
+                await context.SaveChangesAsync();
+            }
+
+            return true;
         }
     }
 }

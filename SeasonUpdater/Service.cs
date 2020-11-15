@@ -50,7 +50,7 @@ namespace BookieBaher.SeasonUpdater
 
         private async Task UpdateSeasons()
         {
-            Console.WriteLine("Updating....");
+            Log("Updating....");
 
             using (BBDBContext context = new BBDBContext(options))
             {
@@ -93,7 +93,7 @@ namespace BookieBaher.SeasonUpdater
 
         private async Task UpdateSeason(JSSeason season)
         {
-            Console.WriteLine($"Updating season {season.Competition.DefaultAlias}");
+            Log($"Updating season {season.Competition.DefaultAlias}");
 
             using (BBDBContext context = new BBDBContext(options))
             {

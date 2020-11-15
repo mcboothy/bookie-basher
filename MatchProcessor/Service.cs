@@ -53,6 +53,8 @@ namespace BookieBaher.SeasonUpdater
 
         private async Task InsertFixtures(JSProcessMatches result)
         {
+            Log($"Processing fixtures for {result.Season.Competition.DefaultAlias}");
+
             using (BBDBContext context = new BBDBContext(options))
             {
                 // obtain the season id as the result's eason id is not populated at this stage
@@ -118,6 +120,8 @@ namespace BookieBaher.SeasonUpdater
 
         private async Task UpdateMatch(JSProcessMatch result)
         {
+            Log($"Updating match {result.Request.HomeTeam} vs {result.Request.AwayTeam}");
+
             using (BBDBContext context = new BBDBContext(options))
             {
                 Match match = null;

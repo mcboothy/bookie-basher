@@ -182,8 +182,7 @@ namespace BookieBasher.Core.Database
             {
                 entity.Property(e => e.ErrorId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Error1)
-                    .HasColumnName("Error")
+                entity.Property(e => e.Message)
                     .HasColumnType("longtext")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -283,20 +282,20 @@ namespace BookieBasher.Core.Database
                 entity.Property(e => e.Host)
                     .IsRequired()
                     .HasColumnType("varchar(255)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
 
                 entity.Property(e => e.Message)
                     .IsRequired()
                     .HasColumnType("longtext")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
 
                 entity.Property(e => e.ServiceName)
                     .IsRequired()
                     .HasColumnType("varchar(255)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
             });
 
             modelBuilder.Entity<Match>(entity =>
@@ -422,7 +421,7 @@ namespace BookieBasher.Core.Database
                 entity.Property(e => e.LastUpdated).HasColumnType("datetime");
 
                 entity.Property(e => e.Status)
-                    .HasColumnType("enum('Updated','Updating','Creating')")
+                    .HasColumnType("enum('Updated','Updating','Creating','Failed')")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 

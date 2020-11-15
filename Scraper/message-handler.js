@@ -41,31 +41,37 @@ class MessageHandler {
     }
 
     async onMessageRecieved(channel, msg) {
-        try {
-            var request = JSON.parse(msg.content.toString());
+        var request = msg.content;
+
+        try {     
+            request = JSON.parse(msg.content.toString());
 
             switch (msg.properties.contentType) {
                 case "request-teams": {
-                    console.log(`scraping competition for ${request.Competition.DefaultAlias}`);
+                    log(channel, `scraping competition for ${request.Competition.DefaultAlias}`);
                     var wikiPromise = wikiScraper.scrapeTeams(request);
                     var fsFull = flashScraper.scrapeTeams(request, true);
                     var fsShort = flashScraper.scrapeTeams(request, false);
 
-                    var results = await Promise.allSettled([wikiPromise, fsFull, fsShort]);
+                    Promise.allSettled([wikiPromise, fsFull, fsShort])
+                        .then((results) => {
+                            var data = Buffer.from(JSON.stringify({
+                                Season: request.Season,
+                                WikiTeams: results[0],
+                                FSFullTeams: results[1],
+                                FSShortTeams: results[2]
+                            }));
 
-                    var data = Buffer.from(JSON.stringify({
-                        Season: request.Season,
-                        WikiTeams: results[0],
-                        FSFullTeams: results[1],
-                        FSShortTeams: results[2]
-                    }));
-
-                    this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
+                            this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
+                        })
+                        .catch((err) => {
+                            this.sendError(channel, 'request-teams-error', request, err, msg);
+                        });
                     break;
                 }
 
                 case "request-fixtures": {
-                    console.log(`scraping fixtures for ${request.Competition.DefaultAlias}`);
+                    log(channel, `scraping fixtures for ${request.Competition.DefaultAlias}`);
                     await flashScraper.scrapeFixtures(request)
                         .then((fixtures) => {
                             var data = Buffer.from(JSON.stringify({
@@ -75,17 +81,12 @@ class MessageHandler {
                             this.sendResults(channel, this.matchQueue, "process-fixtures", data, msg);
                         })
                         .catch((err) => {
-                            console.error(err);
-                            var data = Buffer.from(JSON.stringify({
-                                Request: request,
-                                Error: JSON.stringify(err)
-                            }));
-                            this.sendError(channel, data, msg);
+                            this.sendError(channel, 'request-fixtures-error', request, err, msg);
                         });
                     break;
                 }
                 case "request-match": {
-                    console.log(`scraping match for ${request.HomeTeam} vs ${request.AwayTeam}`);
+                    log(channel, `scraping match for ${request.HomeTeam} vs ${request.AwayTeam}`);
                     flashScraper.scrapeMatch(request)
                         .then((result) => {
                             var data = Buffer.from(JSON.stringify({
@@ -95,17 +96,12 @@ class MessageHandler {
                             this.sendResults(channel, this.matchQueue, "process-match", data, msg);
                         })
                         .catch((err) => {
-                            console.error(err);
-                            var data = Buffer.from(JSON.stringify({
-                                Request: request,
-                                Error: JSON.stringify(err)
-                            }));
-                            this.sendError(channel, data, msg);
+                            this.sendError(channel, 'request-match-error', request, err, msg);
                         });
                     break;
                 }
                 case "request-standings": {
-                    console.log(`scraping standings for ${request.Competition.DefaultAlias}`);
+                    log(channel, `scraping standings for ${request.Competition.DefaultAlias}`);
                     flashScraper.scrapeStandings(request)
                         .then((result) => {
                             var data = Buffer.from(JSON.stringify({
@@ -115,21 +111,16 @@ class MessageHandler {
                             this.sendResults(channel, "process-standings", data, msg);
                         })
                         .catch((err) => {
-                            console.error(err);
-                            var data = Buffer.from(JSON.stringify({
-                                Request: request,
-                                Error: JSON.stringify(err)
-                            }));
-                            this.sendError(channel, data, msg);
+                            this.sendError(channel, 'request-standings-error', request, err, msg);
                         });
                     break;
                 }
                 case "request-all-teams": {
-                    console.log('scraping all teams');
+                    log(channel, 'scraping all teams');
 
                     var results = [];
                     for (const competition of request.Competitions) {
-                        console.log(`scraping teams for ${competition.DefaultAlias}`);
+                        log(channel, `scraping teams for ${competition.DefaultAlias}`);
 
                         var wiki = wikiScraper.scrapeTeams(competition);
                         var flash = flashScraper.scrapeTeams(competition);
@@ -145,12 +136,7 @@ class MessageHandler {
                                 });                                
                             })
                             .catch((err) => {
-                                console.error(err);
-                                var data = Buffer.from(JSON.stringify({
-                                    Request: request,
-                                    Error: JSON.stringify(err)
-                                }));
-                                this.sendError(channel, data, msg);
+                                this.sendError(channel, 'request-all-teams-error', request, err, msg);
                             });
                     }
                     var data = Buffer.from(JSON.stringify({
@@ -160,17 +146,12 @@ class MessageHandler {
                     break;
                 }
                 default:
-                    console.error("UNKNOWN MESSAGE : " + msg.properties.contentType);
+                    log(channel, "UNKNOWN MESSAGE : " + msg.properties.contentType);
                     channel.reject(msg, false);
                     break;
             }
         } catch (err) {
-            console.error(err);
-            var errorData = Buffer.from(JSON.stringify({
-                Request: request,
-                Error: JSON.stringify(err)
-            }));
-            this.sendError(channel, errorData, msg);
+            this.sendError(channel, 'scraper-unknown', request, err, msg);
         }
     }
 
@@ -186,10 +167,20 @@ class MessageHandler {
         channel.ack(msg);
     }
 
-    sendError(channel, data, msg) {
-        var opts = { contentType: "Fetch-Error" };
+    sendError(channel, type, request, err,, msg) {
+        log(channel, err);
+        var opts = { contentType: type };
+        var data = Buffer.from(JSON.stringify({
+            Request: request,
+            Error: JSON.stringify(err)
+        }));
         channel.sendToQueue(this.errorQueue, data, opts);
         channel.reject(msg, false);// TODO - Requeue X times
+    }
+
+    log(channel, msg) {
+        var opts = { contentType: 'log-message' };
+        channel.sendToQueue(this.logQueue, Buffer.from(msg), opts);
     }
 }
 

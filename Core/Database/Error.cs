@@ -7,6 +7,6 @@ namespace BookieBasher.Core.Database
     {
         public int ErrorId { get; set; }
         public string Request { get; set; }
-        public string Error1 { get; set; }
+        public string Message { get; set; }
     }
 }

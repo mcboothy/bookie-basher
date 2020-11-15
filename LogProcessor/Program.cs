@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace BookieBaher.SeasonUpdater
+namespace BookieBaher.LogProcessor
 {
     class Program
     {
