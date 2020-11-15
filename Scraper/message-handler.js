@@ -167,7 +167,7 @@ class MessageHandler {
         channel.ack(msg);
     }
 
-    sendError(channel, type, request, err,, msg) {
+    sendError(channel, type, request, err, msg) {
         log(channel, err);
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
