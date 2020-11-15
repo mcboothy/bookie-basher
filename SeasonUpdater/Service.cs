@@ -61,7 +61,7 @@ namespace BookieBaher.SeasonUpdater
                     Season dbSeason = await context.Season.FirstOrDefaultAsync(s => s.Year == season &&
                                                                                     s.CompetitionId == competition.CompetitionId);
 
-                    if (dbSeason == null)
+                    if (dbSeason == null || dbSeason.Status == "Failed")
                     {
                         await CreateSeason(context, season, competition.CompetitionId);
                     }
