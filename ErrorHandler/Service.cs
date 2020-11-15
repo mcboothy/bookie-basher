@@ -24,22 +24,27 @@ namespace BookieBaher.ErrorHandler
         protected override void ReadConfig(IConfiguration config)
         {
             inboundQueue = config.GetValue<string>("ErrorQueue");
+            outboundQueue = config.GetValue<string>("ScrapeQueue");
         }
 
-        protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
+        protected override Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
             if (args.BasicProperties.ContentType == null)
                 throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
 
-            switch (args.BasicProperties.ContentType)
+            if (args.BasicProperties.ContentType.Contains("request-") )
             {
-                case "process-error":
+                JSError error = args.Body.Decode<JSError>();
+                string request = args.BasicProperties.ContentType.Replace("-error", "");
 
-                    return true;
-
-                default:
-                    throw new ArgumentException($"Invalid content type {args.BasicProperties.ContentType}");
+                if (error.Error.Contains("TimeoutError"))
+                {
+                    SendMessage(Message.Create(error.Request, request));
+                    return Task.FromResult(false);
+                }
             }
+
+            return Task.FromResult(false);
         }
     }
 }

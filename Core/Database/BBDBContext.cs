@@ -15,18 +15,29 @@ namespace BookieBasher.Core.Database
         {
         }
 
-        public virtual DbSet<AverageStat> Averagestat { get; set; }
+        public virtual DbSet<AverageStat> AverageStat { get; set; }
         public virtual DbSet<Competition> Competition { get; set; }
         public virtual DbSet<CompetitionAlias> CompetitionAlias { get; set; }
         public virtual DbSet<Country> Country { get; set; }
+        public virtual DbSet<Error> Error { get; set; }
         public virtual DbSet<Fixtures> Fixtures { get; set; }
         public virtual DbSet<LeagueTeams> LeagueTeams { get; set; }
+        public virtual DbSet<Log> Log { get; set; }
         public virtual DbSet<Match> Match { get; set; }
         public virtual DbSet<MatchStats> MatchStats { get; set; }
         public virtual DbSet<Season> Season { get; set; }
         public virtual DbSet<Team> Team { get; set; }
         public virtual DbSet<TeamAlias> TeamAlias { get; set; }
         public virtual DbSet<UnknownTeams> UnknownTeams { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher;treattinyasboolean=true", x => x.ServerVersion("10.4.12-mariadb"));
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,13 +70,13 @@ namespace BookieBasher.Core.Database
                     .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.Season)
-                    .WithMany(p => p.Averagestat)
+                    .WithMany(p => p.AverageStat)
                     .HasForeignKey(d => d.SeasonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Average_Season");
 
                 entity.HasOne(d => d.Team)
-                    .WithMany(p => p.Averagestat)
+                    .WithMany(p => p.AverageStat)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Average_Team");
@@ -167,6 +178,23 @@ namespace BookieBasher.Core.Database
                     .HasCollation("utf8_general_ci");
             });
 
+            modelBuilder.Entity<Error>(entity =>
+            {
+                entity.Property(e => e.ErrorId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Error1)
+                    .HasColumnName("Error")
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.Request)
+                    .IsRequired()
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+            });
+
             modelBuilder.Entity<Fixtures>(entity =>
             {
                 entity.HasNoKey();
@@ -246,6 +274,29 @@ namespace BookieBasher.Core.Database
                 entity.Property(e => e.TeamId)
                     .HasColumnName("TeamID")
                     .HasColumnType("int(11)");
+            });
+
+            modelBuilder.Entity<Log>(entity =>
+            {
+                entity.Property(e => e.LogId).HasColumnType("int(11)");
+
+                entity.Property(e => e.Host)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.Message)
+                    .IsRequired()
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.ServiceName)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
             });
 
             modelBuilder.Entity<Match>(entity =>
@@ -458,18 +509,14 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<UnknownTeams>(entity =>
             {
+                entity.HasIndex(e => e.SeasonId)
+                    .HasName("FK_UnknownTeams_Season_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Request)
-                    .IsRequired()
-                    .HasColumnType("text")
-                    .HasCharSet("latin1")
-                    .HasCollation("latin1_swedish_ci");
-
-                entity.Property(e => e.TeamsResponce)
-                    .IsRequired()
                     .HasColumnType("text")
                     .HasCharSet("latin1")
                     .HasCollation("latin1_swedish_ci");
@@ -477,6 +524,17 @@ namespace BookieBasher.Core.Database
                 entity.Property(e => e.SeasonId)
                     .HasColumnName("SeasonID")
                     .HasColumnType("int(11)");
+
+                entity.Property(e => e.TeamsResponce)
+                    .HasColumnType("text")
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
+
+                entity.HasOne(d => d.Season)
+                    .WithMany(p => p.UnknownTeams)
+                    .HasForeignKey(d => d.SeasonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UnknownTeams_Season");
             });
 
             OnModelCreatingPartial(modelBuilder);

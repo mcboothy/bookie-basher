@@ -17,7 +17,10 @@ namespace BookieBasher.Core
 
         public static byte[] Encode(this object obj)
         {
-            string json = JsonConvert.SerializeObject(obj);
+            string json = obj is string 
+                        ? (string) obj 
+                        : JsonConvert.SerializeObject(obj);
+
             return Encoding.UTF8.GetBytes(json);
         }
 

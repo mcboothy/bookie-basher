@@ -5,9 +5,7 @@ volumes:
 services:
   bb_database:
     image: mariadb:10.5
-    restart: unless-stopped
-    deploy:
-      replicas: 1            
+    restart: unless-stopped    
     ports:
       - 3306:3306
     volumes:
@@ -18,14 +16,17 @@ services:
       MYSQL_USER: bookie-basher-user
       MYSQL_PASSWORD: P@ssword12
       MYSQL_DATABASE: Bookie-Basher
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.db==true      
   bb_rabbit:
     image: rabbitmq:3.8-management
     ports:
       - 5672:5672
       - 15672:15672
-    restart: unless-stopped      
-    deploy:
-      replicas: 0            
+    restart: unless-stopped             
     environment:
       RABBITMQ_LOGS: "-"
       RABBITMQ_SASL_LOGS: "-"
@@ -33,6 +34,11 @@ services:
       - bb_msg_queue_volume:/data/mnesia
       - ../RabbitMQ/definitions.json:/opt/definitions.json
       - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.mq==true      
   bb_season_updater:
     image: bb_season_updater
     build: 
@@ -40,10 +46,13 @@ services:
       dockerfile: ./SeasonUpdater/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster           
+        SDK_IMAGE: buster          
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
     restart: unless-stopped
     deploy:
-      replicas: 0         
+      replicas: 2    
     environment:
       ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
       MQHost: bb_rabbit
@@ -55,27 +64,14 @@ services:
       args:
         BASE_IMAGE: buster-slim  
         SDK_IMAGE: buster           
-    deploy:
-      replicas: 0                   
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
     restart: unless-stopped
-    environment:
-      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"     
-      MQHost: bb_rabbit
-  bb_server:
-    image: bb_server
-    build: 
-      context: ../../
-      dockerfile: ./Server/Dockerfile
-      args:
-        BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster            
-    ports:
-      - 8080:80
     deploy:
-      replicas: 0         
-    restart: unless-stopped
+      replicas: 2    
     environment:
-      DefaultConnection: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"             
+      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
       MQHost: bb_rabbit
   bb_team_updater:
     image: bb_team_updater
@@ -91,6 +87,59 @@ services:
     environment:
       ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
       MQHost: bb_rabbit
+  bb_error_handler:
+    image: bb_error_handler
+    build: 
+      context: ../../
+      dockerfile: ./ErrorHandler/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7      
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    deploy:
+      replicas: 2        
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
+      MQHost: bb_rabbit  
+  bb_log_processor:
+    image: bb_log_processor
+    build: 
+      context: ../../
+      dockerfile: ./LogProcessor/Dockerfile
+      args:
+        BASE_IMAGE: bionic-arm32v7   
+        SDK_IMAGE: bionic-arm32v7      
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    deploy:
+      replicas: 2        
+    environment:
+      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
+      MQHost: bb_rabbit         
+  bb_server:
+    image: bb_server
+    build: 
+      context: ../../
+      dockerfile: ./Server/Dockerfile
+      args:
+        BASE_IMAGE: buster-slim  
+        SDK_IMAGE: buster            
+    ports:
+      - 8080:80
+    depends_on:
+      - bb_database      
+      - bb_rabbit     
+    restart: unless-stopped
+    deploy:
+      replicas: 2    
+    environment:
+      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      MQHost: bb_rabbit      
   bb_scraper:
     image: bb_scraper
     build: 

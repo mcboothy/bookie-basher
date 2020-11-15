@@ -36,7 +36,7 @@ CREATE TABLE `Season` (
   `SeasonID` int(11) NOT NULL AUTO_INCREMENT,
   `CompetitionID` int(11) NOT NULL,
   `Year` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
-  `Status` enum('Updated','Updating','Creating') CHARACTER SET utf8 DEFAULT NULL,
+  `Status` enum('Updated','Updating','Creating', 'Failed') CHARACTER SET utf8 DEFAULT NULL,
   `LastUpdated` datetime NOT NULL,
   PRIMARY KEY (`SeasonID`),
   KEY `FK_CompetitionII_idx` (`CompetitionID`),
@@ -127,6 +127,21 @@ CREATE TABLE `AverageStat` (
   CONSTRAINT `FK_Average_Season` FOREIGN KEY (`SeasonID`) REFERENCES `Season` (`SeasonID`),
   CONSTRAINT `FK_Average_Team` FOREIGN KEY (`TeamID`) REFERENCES `Team` (`TeamID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Log` (
+  `LogId` int(11) NOT NULL AUTO_INCREMENT,
+  `ServiceName` varchar(255) NOT NULL,
+  `Message` longtext NOT NULL,
+  `Host` varchar(255) NOT NULL,
+  PRIMARY KEY (`LogId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Error` (
+  `ErrorId` int(11) NOT NULL AUTO_INCREMENT,
+  `Request` longtext NOT NULL,
+  `Error` longtext DEFAULT NULL,
+  PRIMARY KEY (`ErrorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE 
     ALGORITHM = UNDEFINED 

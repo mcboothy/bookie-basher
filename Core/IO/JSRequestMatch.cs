@@ -8,10 +8,12 @@ namespace BookieBasher.Core.IO
     {
         public string MatchId { get; set; }
 
-        public long Id { get; set; }
+        public long Id { get; set; } = -1;
 
         public string HomeTeam { get; set; }
 
         public string AwayTeam { get; set; }
+
+        public int RetryCount { get; set; } = 0;
     }
 }

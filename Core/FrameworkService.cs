@@ -22,9 +22,12 @@ namespace BookieBasher.Core
         protected string errorQueue;
         protected string inboundQueue;
         protected string outboundQueue;
+        protected string logQueue;
         protected DbContextOptions<BBDBContext> options;
         protected bool dispatchConsumersAsync;
         protected IConfigurationRoot configuration;
+
+        protected string ServiceName { get; set; } = "";
 
         protected FrameworkService(bool isAsync = true)
         {
@@ -50,6 +53,18 @@ namespace BookieBasher.Core
                 channel.BasicCancel(consumerTag);
                 channel.Dispose();
             }
+        }
+
+        public void Log(string message)
+        {
+            var log = new Log()
+            {
+                Host = Environment.MachineName,
+                Message = message,
+                ServiceName = ServiceName
+            };
+
+            SendMessage(Message.Create(log, "log-message"), logQueue);
         }
 
         public void SendMessage(Message message, string queue = null, string exchange = "")
@@ -134,6 +149,7 @@ namespace BookieBasher.Core
             var optionsBuilder = new DbContextOptionsBuilder<BBDBContext>();
             optionsBuilder.UseMySql(connectionString, (opts) => opts.EnableRetryOnFailure());
 
+            logQueue = configuration.GetValue<string>("LogQueue");
             errorQueue = configuration.GetValue<string>("ErrorQueue");
             options = optionsBuilder.Options;
 

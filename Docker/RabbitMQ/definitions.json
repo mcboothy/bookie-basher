@@ -105,7 +105,14 @@
         "durable": true,
         "auto_delete": false,
         "arguments": {}
-      }    
+      },    
+      {
+        "name": "LogQueue",
+        "vhost": "bookie-basher",
+        "durable": false,
+        "auto_delete": false,
+        "arguments": {}
+      }
     ],
     "bindings": [
       {
@@ -152,6 +159,14 @@
         "source": "bookie-basher-exchange",
         "vhost": "bookie-basher",
         "destination": "StatQueue",
+        "destination_type": "queue",
+        "routing_key": "*",
+        "arguments": {}
+      },
+      {
+        "source": "bookie-basher-exchange",
+        "vhost": "bookie-basher",
+        "destination": "LogQueue",
         "destination_type": "queue",
         "routing_key": "*",
         "arguments": {}
