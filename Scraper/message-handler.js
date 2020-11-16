@@ -70,7 +70,6 @@ class MessageHandler {
                         });
                     break;
                 }
-
                 case "request-fixtures": {
                     this.log(channel, `scraping fixtures for ${request.Competition.DefaultAlias}`);
                     await flashScraper.scrapeFixtures(request)
@@ -169,7 +168,8 @@ class MessageHandler {
     }
 
     sendError(channel, type, request, err, msg) {
-        this.log(channel, JSON.stringify(err));
+        var msg = `Error processing ${type} : msg = ${msg}\n `; 
+        this.log(channel, msg + JSON.stringify(err));
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
             Request: JSON.stringify(request),
