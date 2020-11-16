@@ -48,7 +48,7 @@ class MessageHandler {
 
             switch (msg.properties.contentType) {
                 case "request-teams": {
-                    log(channel, `scraping competition for ${request.Competition.DefaultAlias}`);
+                    this.log(channel, `scraping competition for ${request.Competition.DefaultAlias}`);
                     var wikiPromise = wikiScraper.scrapeTeams(request);
                     var fsFull = flashScraper.scrapeTeams(request, true);
                     var fsShort = flashScraper.scrapeTeams(request, false);
@@ -71,7 +71,7 @@ class MessageHandler {
                 }
 
                 case "request-fixtures": {
-                    log(channel, `scraping fixtures for ${request.Competition.DefaultAlias}`);
+                    this.log(channel, `scraping fixtures for ${request.Competition.DefaultAlias}`);
                     await flashScraper.scrapeFixtures(request)
                         .then((fixtures) => {
                             var data = Buffer.from(JSON.stringify({
@@ -86,7 +86,7 @@ class MessageHandler {
                     break;
                 }
                 case "request-match": {
-                    log(channel, `scraping match for ${request.HomeTeam} vs ${request.AwayTeam}`);
+                    this.log(channel, `scraping match for ${request.HomeTeam} vs ${request.AwayTeam}`);
                     flashScraper.scrapeMatch(request)
                         .then((result) => {
                             var data = Buffer.from(JSON.stringify({
@@ -101,7 +101,7 @@ class MessageHandler {
                     break;
                 }
                 case "request-standings": {
-                    log(channel, `scraping standings for ${request.Competition.DefaultAlias}`);
+                    this.(channel, `scraping standings for ${request.Competition.DefaultAlias}`);
                     flashScraper.scrapeStandings(request)
                         .then((result) => {
                             var data = Buffer.from(JSON.stringify({
@@ -116,11 +116,11 @@ class MessageHandler {
                     break;
                 }
                 case "request-all-teams": {
-                    log(channel, 'scraping all teams');
+                    this.log(channel, 'scraping all teams');
 
                     var results = [];
                     for (const competition of request.Competitions) {
-                        log(channel, `scraping teams for ${competition.DefaultAlias}`);
+                        this.log(channel, `scraping teams for ${competition.DefaultAlias}`);
 
                         var wiki = wikiScraper.scrapeTeams(competition);
                         var flash = flashScraper.scrapeTeams(competition);
@@ -146,7 +146,7 @@ class MessageHandler {
                     break;
                 }
                 default:
-                    log(channel, "UNKNOWN MESSAGE : " + msg.properties.contentType);
+                    this.log(channel, "UNKNOWN MESSAGE : " + msg.properties.contentType);
                     channel.reject(msg, false);
                     break;
             }
@@ -168,7 +168,7 @@ class MessageHandler {
     }
 
     sendError(channel, type, request, err, msg) {
-        log(channel, err);
+        this.log(channel, err);
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
             Request: request,
