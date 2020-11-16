@@ -53,12 +53,14 @@ namespace BookieBaher.SeasonUpdater
 
                 foreach (Competition competition in await context.Competition.ToListAsync())
                 {
-                    Season dbSeason = await context.Season.FirstOrDefaultAsync(s => s.Year == season &&
-                                                                                    s.CompetitionId == competition.CompetitionId);
+                    Season dbSeason = await context.Season.Include(s => s.Competition)
+                                                           .ThenInclude(c => c.CompetitionAlias)
+                                                           .FirstOrDefaultAsync(s => s.Year == season &&
+                                                                                     s.CompetitionId == competition.CompetitionId);
 
                     if (dbSeason == null)
                     {
-                        await CreateSeason(context, season, competition.CompetitionId);
+                        await CreateSeason(context, season, competition);
                     }
                     else 
                     {
@@ -92,11 +94,11 @@ namespace BookieBaher.SeasonUpdater
             }
         }
 
-        private async Task CreateSeason(BBDBContext context, string season, int competitionID)
+        private async Task CreateSeason(BBDBContext context, string season, Competition competition)
         {
             Season dbSeason = new Season()
             {
-                CompetitionId = competitionID,
+                Competition = competition,
                 Year = season,
                 Status = "Creating",
                 LastUpdated = DateTime.Now
