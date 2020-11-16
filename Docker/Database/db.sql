@@ -204,13 +204,11 @@ VALUES
 INSERT INTO `CompetitionAlias` 
 VALUES
 (1,1,'Premier League','FLASHSCORE|WIKI',1),
-(2,1,'Barclays Premier League','BETFAIR',0),
-(3,2,'Serie A','BETFAIR|WIKI|FLASHSCORE',1),
-(4,3,'Premier League','FLASHSCORE|WIKI',1),
-(5,3,'Barclays Premier League','BETFAIR',0),
-(6,4,'Premiership','WIKI|FLASHSCORE',0),
-(7,4,'Scottish Premier','BETFAIR',1),
-(8,5,'A-League','WIKI|FLASHSCORE',1);
+(2,1,'Barclays Premier League','BETFAIR',0)
+(3,2,'Serie A','BETFAIR|WIKI|FLASHSCORE',1),,
+(4,3,'Premiership','WIKI|FLASHSCORE',0),
+(5,3,'Scottish Premier','BETFAIR',1),
+(6,4,'A-League','WIKI|FLASHSCORE',1);
 
 INSERT INTO `Team` 
 VALUES 
