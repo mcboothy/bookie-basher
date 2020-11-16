@@ -21,11 +21,6 @@ namespace BookieBaher.TeamUpdater
 
         protected override bool HasOutbound => true;
 
-        public Service()
-        {
-            ServiceName = Name;
-        }
-
         protected override void ReadConfig(IConfiguration config)
         {
             inboundQueue = config.GetValue<string>("TeamQueue");

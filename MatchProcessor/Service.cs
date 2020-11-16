@@ -19,11 +19,6 @@ namespace BookieBaher.SeasonUpdater
         protected override bool HasOutbound => true;
         protected string scrapeQueue;
 
-        public Service()
-        {
-            ServiceName = Name;
-        }
-
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
             if (args.BasicProperties.ContentType == null)

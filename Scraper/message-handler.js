@@ -101,7 +101,7 @@ class MessageHandler {
                     break;
                 }
                 case "request-standings": {
-                    this.(channel, `scraping standings for ${request.Competition.DefaultAlias}`);
+                    this.log(channel, `scraping standings for ${request.Competition.DefaultAlias}`);
                     flashScraper.scrapeStandings(request)
                         .then((result) => {
                             var data = Buffer.from(JSON.stringify({

@@ -17,11 +17,6 @@ namespace BookieBaher.SeasonUpdater
 
         protected override bool HasOutbound => true;
 
-        public Service()
-        {
-            ServiceName = Name;
-        }
-
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
             if (args.BasicProperties.ContentType == null)
@@ -61,15 +56,37 @@ namespace BookieBaher.SeasonUpdater
                     Season dbSeason = await context.Season.FirstOrDefaultAsync(s => s.Year == season &&
                                                                                     s.CompetitionId == competition.CompetitionId);
 
-                    if (dbSeason == null || dbSeason.Status == "Failed")
+                    if (dbSeason == null)
                     {
                         await CreateSeason(context, season, competition.CompetitionId);
                     }
                     else 
                     {
-                        if (dbSeason.Status == "Updated" && 
-                            dbSeason.LastUpdated < DateTime.Now.AddDays(-1))
-                            await UpdateSeason(context, dbSeason);
+                        switch (dbSeason.Status)
+                        {
+                            case "Updated":
+                                await UpdateSeason(context, dbSeason);
+                                break;
+
+                            default:
+                                if (dbSeason.LastUpdated < DateTime.Now.AddHours(-0.5))
+                                {
+                                    bool hasFixtures = await context.Match.Where(m => m.SeasonId == dbSeason.SeasonId &&
+                                                                                      m.Status == "Fixture")
+                                                                           .AnyAsync();
+
+                                    if (!hasFixtures)
+                                    {
+                                        dbSeason.LastUpdated = DateTime.Now;
+                                        dbSeason.Status = "Creating";
+                                        context.Season.Add(dbSeason);
+                                        await context.SaveChangesAsync();
+
+                                        SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
+                                    }
+                                }
+                                break;
+                        }                                                    
                     }
                 }
             }

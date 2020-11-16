@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,14 +24,15 @@ namespace BookieBasher.Core
         protected string inboundQueue;
         protected string outboundQueue;
         protected string logQueue;
+        protected string serviceName;
         protected DbContextOptions<BBDBContext> options;
         protected bool dispatchConsumersAsync;
         protected IConfigurationRoot configuration;
-
-        protected string ServiceName { get; set; } = "";
-
+              
         protected FrameworkService(bool isAsync = true)
         {
+            var assemblyName = Assembly.GetCallingAssembly().FullName;
+            serviceName = assemblyName.Substring(0, assemblyName.IndexOf(','));
             dispatchConsumersAsync = isAsync;
             ReadConfig();
         }
@@ -61,7 +63,7 @@ namespace BookieBasher.Core
             {
                 Host = Environment.MachineName,
                 Message = message,
-                ServiceName = ServiceName
+                ServiceName = serviceName
             };
 
             SendMessage(Message.Create(log, "log-message"), logQueue);

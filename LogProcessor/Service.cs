@@ -21,11 +21,6 @@ namespace BookieBaher.LogProcessor
 
         protected override bool HasOutbound => false;
 
-        public Service()
-        {
-            ServiceName = Name;
-        }
-
         protected override void ReadConfig(IConfiguration config)
         {
             inboundQueue = config.GetValue<string>("LogQueue");
