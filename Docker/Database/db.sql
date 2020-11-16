@@ -198,9 +198,8 @@ INSERT INTO `Competition`
 VALUES 
 (1,1,'england/premier-league',NULL,NULL,31,28,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
 (2,2,'italy/serie-a',NULL,NULL,81,51,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(3,3,'england/premier-league',NULL,NULL,31,28,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(4,4,'scotland/premiership',NULL,NULL,105,80,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(5,5,'australia/a-league',NULL,NULL,NULL,5,'2020-10-01 00:00:00','2021-08-31 00:00:00');
+(3,3,'scotland/premiership',NULL,NULL,105,80,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(4,4,'australia/a-league',NULL,NULL,NULL,5,'2020-10-01 00:00:00','2021-08-31 00:00:00');
 
 INSERT INTO `CompetitionAlias` 
 VALUES
