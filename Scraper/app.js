@@ -2,7 +2,7 @@
 var fs = require('fs');
 var amqp = require('amqplib');
 var handler = require('./message-handler');
-var config = JSON.parse(fs.readFileSync('./config.json', 'UTF-8'));
+var config = JSON.parse(fs.readFileSync('../config.json', 'UTF-8'));
 
 const username = process.env.MQUsername || config.MQUsername;
 const password = process.env.MQPassword || config.MQPassword;
