@@ -1,5 +1,6 @@
 'use strict';
 var browser = require('./browser');
+var os = require("os");
 var flashScraper = require('./flashscores-scraper');
 var wikiScraper = require('./wiki-scraper');
 
@@ -171,7 +172,7 @@ class MessageHandler {
         this.log(channel, JSON.stringify(err));
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
-            Request: request,
+            Request: JSON.stringify(request),
             Error: JSON.stringify(err)
         }));
         channel.sendToQueue(this.errorQueue, data, opts);
@@ -180,7 +181,13 @@ class MessageHandler {
 
     log(channel, msg) {
         var opts = { contentType: 'log-message' };
-        channel.sendToQueue(this.logQueue, Buffer.from(msg), opts);
+        var hostname = os.hostname();
+        var data = Buffer.from(JSON.stringify({
+            Message: msg,
+            Host: hostname,
+            ServiceName: 'BookieBasher.Scraper'
+        }));
+        channel.sendToQueue(this.logQueue, data, opts);
     }
 }
 

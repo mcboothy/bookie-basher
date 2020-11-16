@@ -54,7 +54,7 @@ namespace BookieBaher.SeasonUpdater
             {
                 // obtain the season id as the result's eason id is not populated at this stage
                 var dbSeason = await context.Season.Include(s => s.Competition) // explicity load the Competition
-                                                    .Include(s => s.Competition.CompetitionAlias) // explicity load the Competition Aliases
+                                                   .Include(s => s.Competition.CompetitionAlias) // explicity load the Competition Aliases
                                                    .FirstOrDefaultAsync(s => s.Year == result.Season.Year &&
                                                                              s.CompetitionId == result.Season.CompetitionId);
                 if (dbSeason == null)
@@ -95,6 +95,7 @@ namespace BookieBaher.SeasonUpdater
                             SeasonId = result.Season.SeasonId
                         };
 
+                        dbSeason.Status = "Failed";
                         context.UnknownTeams.Add(unknownTeams);
                         await context.SaveChangesAsync();
 
