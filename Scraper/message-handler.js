@@ -4,12 +4,12 @@ var flashScraper = require('./flashscores-scraper');
 var wikiScraper = require('./wiki-scraper');
 
 class MessageHandler {
-    async init(chrome, matchQueue, teamQueue, updateQueue, errorQueue) {
+    async init(chrome, matchQueue, teamQueue, updateQueue, errorQueue, logQueue) {
         this.matchQueue = matchQueue;
         this.updateQueue = updateQueue;
         this.errorQueue = errorQueue;
         this.teamQueue = teamQueue;
-
+        this.logQueue = logQueue;
         await browser.init(chrome);
 
         //var request = {
@@ -168,7 +168,7 @@ class MessageHandler {
     }
 
     sendError(channel, type, request, err, msg) {
-        this.log(channel, err);
+        this.log(channel, JSON.stringify(err));
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
             Request: request,

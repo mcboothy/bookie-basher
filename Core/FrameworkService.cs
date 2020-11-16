@@ -123,7 +123,13 @@ namespace BookieBasher.Core
                 }
                 catch (Exception ex)
                 {
-                    SendMessage(Message.Create(ex.ToDetailedString(), "process-error"), errorQueue);
+                    JSError error = new JSError()
+                    {
+                        Error = ex.ToDetailedString(),
+                        Request = ea.BasicProperties.ContentType
+                    };
+
+                    SendMessage(Message.Create(error, "process-error"), errorQueue);
                 }
 
                 if (reject)

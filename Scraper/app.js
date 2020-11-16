@@ -22,6 +22,7 @@ const updateQueue = process.env.UpdateQueue || config.UpdateQueue;
 const matchQueue = process.env.MatchQueue || config.MatchQueue;
 const teamQueue = process.env.TeamQueue || config.TeamQueue;
 const scrapeQueue = process.env.ScrapeQueue || config.ScrapeQueue;
+const logQueue = process.env.LogQueue || config.LogQueue;
 
 (async () => {
     
@@ -37,7 +38,7 @@ const scrapeQueue = process.env.ScrapeQueue || config.ScrapeQueue;
         const conn = await amqp.connect(url);
         const channel = await conn.createChannel();
 
-        await handler.init(chrome, matchQueue, teamQueue, updateQueue, errorQueue);
+        await handler.init(chrome, matchQueue, teamQueue, updateQueue, errorQueue, logQueue);
 
         process.on('exit', async (code) => {
             await channel.close();
