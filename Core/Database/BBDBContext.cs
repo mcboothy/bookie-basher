@@ -180,6 +180,9 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Error>(entity =>
             {
+                entity.HasKey(e => e.ErrorId)
+                    .HasName("PRIMARY");
+
                 entity.Property(e => e.ErrorId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Message)
@@ -277,6 +280,9 @@ namespace BookieBasher.Core.Database
 
             modelBuilder.Entity<Log>(entity =>
             {
+                entity.HasKey(e => e.LogId)
+                    .HasName("PRIMARY");
+
                 entity.Property(e => e.LogId).HasColumnType("int(11)");
 
                 entity.Property(e => e.Host)
