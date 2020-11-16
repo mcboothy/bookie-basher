@@ -49,7 +49,7 @@ class MessageHandler {
 
             switch (msg.properties.contentType) {
                 case "request-teams": {
-                    this.log(channel, `scraping competition for ${request.Competition.DefaultAlias}`);
+                    this.log(channel, `scraping teams for ${request.Competition.DefaultAlias}`);
                     var wikiPromise = wikiScraper.scrapeTeams(request);
                     var fsFull = flashScraper.scrapeTeams(request, true);
                     var fsShort = flashScraper.scrapeTeams(request, false);

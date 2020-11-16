@@ -45,6 +45,8 @@ namespace BookieBaher.TeamUpdater
 
         private async Task InsertTeams(JSCompetitionTeams result)
         {
+            Log($"Inserting teams for {result.Season.Competition.DefaultAlias}");
+
             using (BBDBContext context = new BBDBContext(options))
             {
                 var ut = await context.UnknownTeams.FirstOrDefaultAsync(ut => ut.SeasonId == result.Season.SeasonId);

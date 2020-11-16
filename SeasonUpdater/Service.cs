@@ -51,7 +51,8 @@ namespace BookieBaher.SeasonUpdater
             {
                 string season = GetYear();
 
-                foreach (Competition competition in await context.Competition.ToListAsync())
+                foreach (Competition competition in await context.Competition.Include(c => c.CompetitionAlias)
+                                                                             .ToListAsync())
                 {
                     Season dbSeason = await context.Season.Include(s => s.Competition)
                                                            .ThenInclude(c => c.CompetitionAlias)
