@@ -110,5 +110,127 @@ namespace BookieBasher.Core
 
             return false;
         }
+
+        public static string ToDetailedString(this Exception ex)
+        {
+            if (ex is null)
+                throw new ArgumentNullException(nameof(ex));
+
+            StringBuilder entry = new StringBuilder();
+            entry.AppendLine("******************** ERROR ***********************");
+            entry.AppendLine("Exception");
+            entry.AppendLine(ex.GetType().ToString());
+            entry.AppendLine();
+
+            if (ex.Message != null)
+            {
+                entry.AppendLine("Message");
+                entry.AppendLine(ex.Message);
+                entry.AppendLine();
+            }
+
+            if (ex.Source != null)
+            {
+                entry.AppendLine("Source");
+                entry.AppendLine(ex.Source);
+                entry.AppendLine();
+            }
+
+            if (ex.Data != null)
+            {
+                entry.AppendLine("StackTrace");
+                entry.AppendLine(ex.StackTrace);
+                entry.AppendLine();
+            }
+
+            LogData(ex, ref entry, 0);
+
+            if (ex.InnerException != null)
+            {
+                entry.AppendLine("======================= Inner Exceptions ======================");
+                LogInnerExceptions(ex.InnerException, ref entry, 1);
+                entry.AppendLine("===============================================================");
+            }
+
+            entry.AppendLine("******************** END OF ERROR ***********************");
+
+            return entry.ToString();
+        }
+
+        private static void LogInnerExceptions(Exception e, ref StringBuilder entry, int depth)
+        {
+            if (e != null)
+            {
+                string tabs = GetTabs(depth);
+
+                entry.AppendLine(tabs + "----------- Exception (" + depth + ") ----------------");
+
+                entry.AppendLine(tabs + "Exception");
+                entry.AppendLine(tabs + e.GetType().ToString());
+                entry.AppendLine();
+
+                if (e.Message != null)
+                {
+                    entry.AppendLine(tabs + "Message");
+                    entry.AppendLine(tabs + e.Message);
+                    entry.AppendLine();
+                }
+
+                if (e.Source != null)
+                {
+                    entry.AppendLine(tabs + "Source");
+                    entry.AppendLine(tabs + e.Source);
+                    entry.AppendLine();
+                }
+
+                if (e.StackTrace != null)
+                {
+                    entry.AppendLine(tabs + "StackTrace");
+                    entry.AppendLine(tabs + e.StackTrace.Replace("\n", "\n" + tabs));
+                    entry.AppendLine();
+                }
+
+                LogData(e, ref entry, depth);
+
+                entry.AppendLine(tabs + "----------- Exception (" + depth + ")-----------------");
+
+                if (e.InnerException != null)
+                {
+                    LogInnerExceptions(e.InnerException, ref entry, ++depth);
+                }
+            }
+        }
+
+        private static void LogData(Exception e, ref StringBuilder entry, int depth)
+        {
+            if (HasData(e))
+            {
+                string tabs = GetTabs(depth);
+
+                entry.AppendLine(tabs + "Data");
+
+                foreach (var data in e.Data.Values)
+                {
+                    entry.AppendLine(tabs + data.ToString());
+                }
+            }
+        }
+
+        private static bool HasData(Exception e)
+        {
+            return e.Data != null && e.Data.Count > 0;
+        }
+
+        private static string GetTabs(int depth)
+        {
+            string tabs = "";
+
+            for (int n = 0; n < depth; n++)
+            {
+                tabs += "\t";
+            }
+
+            return tabs;
+        }
     }
 }

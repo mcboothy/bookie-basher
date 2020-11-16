@@ -123,8 +123,7 @@ namespace BookieBasher.Core
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"ERROR -  {ex.Message}");
-                    SendMessage(Message.Create(ex, "process-error"), errorQueue);
+                    SendMessage(Message.Create(ex.ToDetailedString(), "process-error"), errorQueue);
                 }
 
                 if (reject)

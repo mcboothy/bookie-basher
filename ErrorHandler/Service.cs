@@ -19,7 +19,7 @@ namespace BookieBaher.ErrorHandler
     {
         public static string Name = "Error Handler";
 
-        protected override bool HasOutbound => false;
+        protected override bool HasOutbound => true;
 
         protected override void ReadConfig(IConfiguration config)
         {
@@ -29,32 +29,40 @@ namespace BookieBaher.ErrorHandler
 
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
-            if (args.BasicProperties.ContentType == null)
-                throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
+            try
+            {
+                if (args.BasicProperties.ContentType == null)
+                    throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
 
-            JSError error = args.Body.Decode<JSError>();
+                JSError error = args.Body.Decode<JSError>();
 
-            Log($"Processing error for {args.BasicProperties.ContentType}");
+                Log($"Processing error for {args.BasicProperties.ContentType}");
 
-            if (args.BasicProperties.ContentType.Contains("request-") )
-            {                
-                string request = args.BasicProperties.ContentType.Replace("-error", "");
-
-                if (error.Error.Contains("TimeoutError"))
+                if (args.BasicProperties.ContentType.Contains("request-"))
                 {
-                    Log($"Retrying due to timeout {request}");
-                    SendMessage(Message.Create(error.Request, request));
+                    string request = args.BasicProperties.ContentType.Replace("-error", "");
+
+                    if (error.Error.Contains("TimeoutError"))
+                    {
+                        Log($"Retrying due to timeout {request}");
+                        SendMessage(Message.Create(error.Request, request));
+                    }
+                }
+
+                using (BBDBContext context = new BBDBContext(options))
+                {
+                    context.Error.Add(new Error()
+                    {
+                        Message = error.Error,
+                        Request = error.Request
+                    });
+
+                    await context.SaveChangesAsync();
                 }
             }
-
-            using (BBDBContext context = new BBDBContext(options))
+            catch (Exception ex)
             {
-                context.Error.Add(new Error()
-                {
-                    Message = error.Error,
-                    Request = error.Request
-                });
-                await context.SaveChangesAsync();
+                Log($"Exception occurred while processing {args.BasicProperties.ContentType}\n{ex.ToDetailedString()}");
             }
 
             return true;

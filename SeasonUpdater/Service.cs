@@ -138,10 +138,25 @@ namespace BookieBaher.SeasonUpdater
                     match.Status = "Updating";
                     context.Match.Update(match);
 
+                    var teamAliases = await context.TeamAlias.Where(ta => ta.TeamId == match.AwayTeamId ||
+                                                                          ta.TeamId == match.HomeTeamId).ToListAsync();
+
+                    var homeTeam = teamAliases.FirstOrDefault(ta => ta.TeamId == match.HomeTeamId && ta.IsDefault == 1);
+
+                    if (homeTeam == null)
+                        homeTeam = teamAliases.FirstOrDefault(ta => ta.TeamId == match.HomeTeamId);
+
+                    var awayTeam = teamAliases.FirstOrDefault(ta => ta.TeamId == match.AwayTeamId && ta.IsDefault == 1);
+
+                    if (awayTeam == null)
+                        awayTeam = teamAliases.FirstOrDefault(ta => ta.TeamId == match.AwayTeamId);
+
                     var request = new JSRequestMatch()
                     {
                         MatchId = match.FsmatchId,
-                        Id = match.MatchId
+                        Id = match.MatchId, 
+                        HomeTeam = homeTeam?.Alias,
+                        AwayTeam = awayTeam?.Alias
                     };
 
                     SendMessage(Message.Create(request, "request-match"));
