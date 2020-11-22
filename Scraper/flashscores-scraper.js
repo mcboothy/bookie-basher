@@ -154,50 +154,17 @@ class FlashScoresScraper {
             await page.goto(url, { timeout: 300000 });
             await page.addScriptTag({ url: 'https://code.jquery.com/jquery-3.2.1.min.js' });
 
-            await page.waitForSelector('#tabitem-table');
-
-            try {
-                // greek league has a championship stage with reduced teams
-                // ensure we are looking at the standings for the main league
-                await page.waitForSelector('.ifmenu.bubble.stages-menu', { timeout: 1000 });
-                await page.evaluate(() => {
-                    try {
-                        $("a:contains('Main')")[0].click();
-                    } catch (err) {
-                        console.error('ERROR scrapeTeams - ' + err);
-                    }
-                });
-                await page.waitForNavigation();
-            } catch (err) {
-                if (!err.message.includes('waiting for selector ".ifmenu.bubble.stages-menu"'))
-                    throw err;
-            }
-
-            await page.$eval('#tabitem-table', elem => elem.click());
-            await page.waitForSelector('#table-type-1');
-
-            await page.waitForSelector('.table__body');
+            await page.waitForSelector('a[class*="rowCellParticipantImage"]');
 
             var results = await page.evaluate(() => {
                 try {
                     var data = [];
-                    $('.table__cell--col_participant_name').each(function () {
-                        var url = $(this).find('.team-logo')
-                            .css('background-image')
-                            .replace('url(', '')
-                            .replace(')', '')
-                            .replace(/\"/gi, "");
-
-                        var name = $(this).find('.team_name_span').text();
-
-                        if ($(this).find('.team_name_span').find('.glib-live-rank').length > 0) {
-                            name = $(this).find('.team_name_span')
-                                .find('a').text();
-                        }
+                    $('a[class*=rowCellParticipantImage]').each(function () {
+                        var img = $(this).find('img');
 
                         data.push({
-                            Name: name,
-                            URL: url,
+                            Name: img.attr('title'),
+                            URL: img.attr('src')
                         });
                     });
 
@@ -209,6 +176,8 @@ class FlashScoresScraper {
 
             return results;
 
+        } catch (err) {
+            console.error('ERROR scrapeTeams - ' + err);
         } finally {
             await page.close();
         }

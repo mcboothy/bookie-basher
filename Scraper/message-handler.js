@@ -14,26 +14,28 @@ class MessageHandler {
         await browser.init(chrome);
 
         //var request = {
-        //    "SeasonId": 4,
-        //    "CompetitionId": 1,
-        //    "Year": "2020/2021",
-        //    "Status": "Creating",
-        //    "Competition": {
-        //        "CompetitionId": 1,
-        //        "Name": "Premier League",
-        //        "FlashScoreUrl": "scotland/premiership",
-        //        "SoccerWikiId": 28
+        //    "SeasonId": 2, "CompetitionId": 2, "Year": "2020/2021", "Status": "Failed", "Competition": {
+        //        "CompetitionId": 2, "CountryId": 0, "Names": null, "DefaultAlias": "Serie A", "FlashScoreUrl": "italy/serie-a", "Sponsor": null, "YearFounded": null, "BetfairId": null, "SoccerWikiId": 51, "StartDate": "0001-01-01T00:00:00", "EndDate": "0001-01-01T00:00:00"
         //    }
         //};
 
-        //var teams = await flashScraper.scrapeFixtures(request);
+        //var wikiPromise = wikiScraper.scrapeTeams(request);
+        //var fsFull = flashScraper.scrapeTeams(request, true);
+        //var fsShort = flashScraper.scrapeTeams(request, false);
 
-        //wikiScraper.scrapeCompetition(request)
-        //    .then((teams) => {
-        //        console.log(teams);
+        //Promise.allSettled([wikiPromise, fsFull, fsShort])
+        //    .then((results) => {
+        //        var data = Buffer.from(JSON.stringify({
+        //            Season: request.Season,
+        //            WikiTeams: results[0],
+        //            FSFullTeams: results[1],
+        //            FSShortTeams: results[2]
+        //        }));
+
+        //        this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
         //    })
         //    .catch((err) => {
-        //        console.error(err);
+        //        this.sendError(channel, 'request-teams-error', request, err, msg);
         //    });
     }
 
@@ -44,7 +46,7 @@ class MessageHandler {
     async onMessageRecieved(channel, msg) {
         var request = msg.content;
 
-        try {     
+        try {
             request = JSON.parse(msg.content.toString());
 
             switch (msg.properties.contentType) {
@@ -133,7 +135,7 @@ class MessageHandler {
                                     WikiTeams: result[0],
                                     FSShortTeams: result[1],
                                     FSFullTeams: result[2]
-                                });                                
+                                });
                             })
                             .catch((err) => {
                                 this.sendError(channel, 'request-all-teams-error', request, err, msg);
@@ -168,7 +170,7 @@ class MessageHandler {
     }
 
     sendError(channel, type, request, err, msg) {
-        var msg = `Error processing ${type} : msg = ${msg}\n `; 
+        var msg = `Error processing ${type} : msg = ${msg}\n `;
         this.log(channel, msg + JSON.stringify(err));
         var opts = { contentType: type };
         var data = Buffer.from(JSON.stringify({
