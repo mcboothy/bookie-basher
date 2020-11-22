@@ -45,8 +45,8 @@ services:
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7      
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -62,8 +62,8 @@ services:
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7   
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -79,8 +79,8 @@ services:
       context: ../../
       dockerfile: ./TeamUpdater/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7   
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -96,8 +96,8 @@ services:
       context: ../../
       dockerfile: ./ErrorHandler/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7   
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -113,8 +113,8 @@ services:
       context: ../../
       dockerfile: ./LogProcessor/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7   
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
       - bb_rabbit     
@@ -130,8 +130,8 @@ services:
       context: ../../
       dockerfile: ./Server/Dockerfile
       args:
-        BASE_IMAGE: -buster-slim-arm32v7
-        SDK_IMAGE: -buster-slim-arm32v7   
+        BASE_IMAGE: buster-slim-arm32v7
+        SDK_IMAGE: buster-slim-arm32v7   
     depends_on:
       - bb_database      
     ports:
