@@ -36,7 +36,7 @@ namespace BookieBaher.LogProcessor
                 case "log-message":
                     using (BBDBContext context = new BBDBContext(options))
                     {
-                        context.Log.Add(args.Body.Decode<Log>());
+                        context.Logs.Add(args.Body.Decode<Log>());
                         await context.SaveChangesAsync();
                     }
                     return true;
