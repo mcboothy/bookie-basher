@@ -27,7 +27,7 @@ namespace BookieBasher.Core
         protected string serviceName;
         protected DbContextOptions<BBDBContext> options;
         protected bool dispatchConsumersAsync;
-        protected IConfigurationRoot configuration;
+        protected IConfiguration configuration;
               
         protected FrameworkService(bool isAsync = true)
         {
@@ -154,7 +154,7 @@ namespace BookieBasher.Core
 
             string connectionString = configuration.GetValue<string>("ConnectionString");
             var optionsBuilder = new DbContextOptionsBuilder<BBDBContext>();
-            optionsBuilder.UseMySql(connectionString, (opts) => opts.EnableRetryOnFailure());
+            optionsBuilder.UseMySql(connectionString, ServerVersion.FromString("10.4.12-mariadb"), (opts) => opts.EnableRetryOnFailure());
 
             logQueue = configuration.GetValue<string>("LogQueue");
             errorQueue = configuration.GetValue<string>("ErrorQueue");

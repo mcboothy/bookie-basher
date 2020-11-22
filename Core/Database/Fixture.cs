@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
-    public partial class Fixtures
+    public partial class Fixture
     {
         public int MatchId { get; set; }
         public int SeasonId { get; set; }

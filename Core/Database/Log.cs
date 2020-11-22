@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
     public partial class Log

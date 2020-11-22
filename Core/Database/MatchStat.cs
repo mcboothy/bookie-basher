@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
-    public partial class MatchStats
+    public partial class MatchStat
     {
-        public MatchStats()
+        public MatchStat()
         {
             MatchAwayTeamStats = new HashSet<Match>();
             MatchHomeTeamStats = new HashSet<Match>();

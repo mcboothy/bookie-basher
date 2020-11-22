@@ -51,11 +51,11 @@ namespace BookieBaher.SeasonUpdater
             {
                 string season = GetYear();
 
-                foreach (Competition competition in await context.Competition.Include(c => c.CompetitionAlias)
+                foreach (Competition competition in await context.Competitions.Include(c => c.CompetitionAliases)
                                                                              .ToListAsync())
                 {
-                    Season dbSeason = await context.Season.Include(s => s.Competition)
-                                                           .ThenInclude(c => c.CompetitionAlias)
+                    Season dbSeason = await context.Seasons.Include(s => s.Competition)
+                                                           .ThenInclude(c => c.CompetitionAliases)
                                                            .FirstOrDefaultAsync(s => s.Year == season &&
                                                                                      s.CompetitionId == competition.CompetitionId);
 
@@ -74,7 +74,7 @@ namespace BookieBaher.SeasonUpdater
                             default:
                                 if (dbSeason.LastUpdated < DateTime.Now.AddHours(-0.5))
                                 {
-                                    bool hasFixtures = await context.Match.Where(m => m.SeasonId == dbSeason.SeasonId &&
+                                    bool hasFixtures = await context.Matches.Where(m => m.SeasonId == dbSeason.SeasonId &&
                                                                                       m.Status == "Fixture")
                                                                            .AnyAsync();
 
@@ -82,7 +82,7 @@ namespace BookieBaher.SeasonUpdater
                                     {
                                         dbSeason.LastUpdated = DateTime.Now;
                                         dbSeason.Status = "Creating";
-                                        context.Season.Add(dbSeason);
+                                        context.Seasons.Add(dbSeason);
                                         await context.SaveChangesAsync();
 
                                         SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
@@ -105,7 +105,7 @@ namespace BookieBaher.SeasonUpdater
                 LastUpdated = DateTime.Now
             };
 
-            context.Season.Add(dbSeason);
+            context.Seasons.Add(dbSeason);
             await context.SaveChangesAsync();
 
             SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
@@ -117,7 +117,7 @@ namespace BookieBaher.SeasonUpdater
 
             using (BBDBContext context = new BBDBContext(options))
             {
-                Season dbSeason = await context.Season.FirstAsync(s => s.SeasonId == season.SeasonId);
+                Season dbSeason = await context.Seasons.FirstAsync(s => s.SeasonId == season.SeasonId);
                 await UpdateSeason(context, dbSeason);
             }
         }
@@ -125,7 +125,7 @@ namespace BookieBaher.SeasonUpdater
         private async Task UpdateSeason(BBDBContext context, Season dbSeason)
         {
             // Get all fixtures that haven't been scraped ordered asscending
-            var matchesToUpdate = context.Match.Where(m => m.SeasonId == dbSeason.SeasonId &&
+            var matchesToUpdate = context.Matches.Where(m => m.SeasonId == dbSeason.SeasonId &&
                                                          m.Status != "Result" &&
                                                          m.DateTime <= DateTime.Now.AddHours(-2))
                                                 .OrderBy(m => m.DateTime);
@@ -134,14 +134,14 @@ namespace BookieBaher.SeasonUpdater
             {
                 dbSeason.Status = "Updating";
                 dbSeason.LastUpdated = DateTime.Now;
-                context.Season.Update(dbSeason);
+                context.Seasons.Update(dbSeason);
 
                 foreach (Match match in matchesToUpdate)
                 {
                     match.Status = "Updating";
-                    context.Match.Update(match);
+                    context.Matches.Update(match);
 
-                    var teamAliases = await context.TeamAlias.Where(ta => ta.TeamId == match.AwayTeamId ||
+                    var teamAliases = await context.TeamAliases.Where(ta => ta.TeamId == match.AwayTeamId ||
                                                                           ta.TeamId == match.HomeTeamId).ToListAsync();
 
                     var homeTeam = teamAliases.FirstOrDefault(ta => ta.TeamId == match.HomeTeamId && ta.IsDefault == 1);
@@ -169,7 +169,7 @@ namespace BookieBaher.SeasonUpdater
             {
                 dbSeason.Status = "Updated";
                 dbSeason.LastUpdated = DateTime.Now;
-                context.Season.Update(dbSeason);
+                context.Seasons.Update(dbSeason);
             }
 
             await context.SaveChangesAsync();

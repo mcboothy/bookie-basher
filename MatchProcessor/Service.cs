@@ -53,8 +53,8 @@ namespace BookieBaher.SeasonUpdater
             using (BBDBContext context = new BBDBContext(options))
             {
                 // obtain the season id as the result's eason id is not populated at this stage
-                var dbSeason = await context.Season.Include(s => s.Competition) // explicity load the Competition
-                                                   .ThenInclude(c => c.CompetitionAlias) // explicity load the Competition Aliases
+                var dbSeason = await context.Seasons.Include(s => s.Competition) // explicity load the Competition
+                                                   .ThenInclude(c => c.CompetitionAliases) // explicity load the Competition Aliases
                                                    .FirstOrDefaultAsync(s => s.Year == result.Season.Year &&
                                                                              s.CompetitionId == result.Season.CompetitionId);
                 if (dbSeason == null)
@@ -64,7 +64,7 @@ namespace BookieBaher.SeasonUpdater
                 if (result.Matches == null ||  !result.Matches.Any())
                 {
                     dbSeason.Status = "Failed";
-                    context.Season.Update(dbSeason);
+                    context.Seasons.Update(dbSeason);
                     await context.SaveChangesAsync();
                     return;
                 }
@@ -75,7 +75,7 @@ namespace BookieBaher.SeasonUpdater
                                           .ToList();
 
                 // query the database for the teams in this league
-                var dbTeams = (await context.Team.Include(t => t.TeamAlias).ToListAsync())
+                var dbTeams = (await context.Teams.Include(t => t.TeamAliases).ToListAsync())
                                                  .Where(t => t.ContainsAlias(teams));
 
                 HashSet<JSMatch> failedMatches = new HashSet<JSMatch>();
@@ -89,7 +89,7 @@ namespace BookieBaher.SeasonUpdater
                     // can't resolve team(s) so throw error
                     if (homeTeam == null || awayTeam == null)
                     {
-                        UnknownTeams unknownTeams = new UnknownTeams()
+                        UnknownTeam unknownTeams = new UnknownTeam()
                         {
                             Request = result.ToJSON(),
                             SeasonId = result.Season.SeasonId
@@ -105,7 +105,7 @@ namespace BookieBaher.SeasonUpdater
                     }
 
                     var match = ParseMatch(fixture, homeTeam, awayTeam, dbSeason);
-                    context.Match.Add(match);
+                    context.Matches.Add(match);
                 }
 
                 await context.SaveChangesAsync();
@@ -124,7 +124,7 @@ namespace BookieBaher.SeasonUpdater
 
                 if (result.MatchStats == null)
                 {
-                    match = await context.Match.Include((m) => m.Season)
+                    match = await context.Matches.Include((m) => m.Season)
                                                .Include((m) => m.Season.Competition)
                                                .FirstAsync(m => m.MatchId == result.Request.Id);
 
@@ -132,7 +132,7 @@ namespace BookieBaher.SeasonUpdater
                 }
                 else
                 {
-                    match = await context.Match.Include((m) => m.HomeTeamStats)
+                    match = await context.Matches.Include((m) => m.HomeTeamStats)
                                                .Include((m) => m.AwayTeamStats)
                                                .Include((m) => m.Season)
                                                .Include((m) => m.Season.Competition)
@@ -158,7 +158,7 @@ namespace BookieBaher.SeasonUpdater
                     context.MatchStats.Update(match.AwayTeamStats);
                 }
 
-                context.Match.Update(match);
+                context.Matches.Update(match);
                 await context.SaveChangesAsync();
             }
         }
@@ -175,8 +175,8 @@ namespace BookieBaher.SeasonUpdater
                 FsmatchId = match.FSMatchID,
                 Postponed = match.Postponed ? (sbyte)1 : (sbyte)0,
                 LastUpdated = DateTime.Now,
-                AwayTeamStats = new MatchStats(),
-                HomeTeamStats = new MatchStats()
+                AwayTeamStats = new MatchStat(),
+                HomeTeamStats = new MatchStat()
             };
         }
     }

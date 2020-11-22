@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
     public partial class Season
     {
         public Season()
         {
-            AverageStat = new HashSet<AverageStat>();
-            Match = new HashSet<Match>();
-            Team = new HashSet<Team>();
-            UnknownTeams = new HashSet<UnknownTeams>();
+            AverageStats = new HashSet<AverageStat>();
+            Matches = new HashSet<Match>();
+            Teams = new HashSet<Team>();
+            UnknownTeams = new HashSet<UnknownTeam>();
         }
 
         public int SeasonId { get; set; }
@@ -20,9 +22,9 @@ namespace BookieBasher.Core.Database
         public DateTime LastUpdated { get; set; }
 
         public virtual Competition Competition { get; set; }
-        public virtual ICollection<AverageStat> AverageStat { get; set; }
-        public virtual ICollection<Match> Match { get; set; }
-        public virtual ICollection<Team> Team { get; set; }
-        public virtual ICollection<UnknownTeams> UnknownTeams { get; set; }
+        public virtual ICollection<AverageStat> AverageStats { get; set; }
+        public virtual ICollection<Match> Matches { get; set; }
+        public virtual ICollection<Team> Teams { get; set; }
+        public virtual ICollection<UnknownTeam> UnknownTeams { get; set; }
     }
 }

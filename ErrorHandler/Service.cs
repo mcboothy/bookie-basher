@@ -51,7 +51,7 @@ namespace BookieBaher.ErrorHandler
 
                 using (BBDBContext context = new BBDBContext(options))
                 {
-                    context.Error.Add(new Error()
+                    context.Errors.Add(new Error()
                     {
                         Message = error.Error,
                         Request = error.Request

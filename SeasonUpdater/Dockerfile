@@ -1,11 +1,11 @@
 ARG BASE_IMAGE=buster-slim
 ARG SDK_IMAGE=buster
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.6-$BASE_IMAGE AS base
+FROM mcr.microsoft.com/dotnet/runtime:5.0-$BASE_IMAGE AS base
 
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-$SDK_IMAGE AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-$SDK_IMAGE AS build
 
 COPY SeasonUpdater ./SeasonUpdater
 COPY Core ./Core

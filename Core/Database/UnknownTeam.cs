@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
-    public partial class UnknownTeams
+    public partial class UnknownTeam
     {
         public int Id { get; set; }
         public int SeasonId { get; set; }

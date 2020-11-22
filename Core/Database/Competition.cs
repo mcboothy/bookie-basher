@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
     public partial class Competition
     {
         public Competition()
         {
-            CompetitionAlias = new HashSet<CompetitionAlias>();
-            Season = new HashSet<Season>();
+            CompetitionAliases = new HashSet<CompetitionAlias>();
+            Seasons = new HashSet<Season>();
         }
 
         public int CompetitionId { get; set; }
@@ -22,7 +24,7 @@ namespace BookieBasher.Core.Database
         public DateTime EndDate { get; set; }
 
         public virtual Country Country { get; set; }
-        public virtual ICollection<CompetitionAlias> CompetitionAlias { get; set; }
-        public virtual ICollection<Season> Season { get; set; }
+        public virtual ICollection<CompetitionAlias> CompetitionAliases { get; set; }
+        public virtual ICollection<Season> Seasons { get; set; }
     }
 }

@@ -30,6 +30,18 @@ namespace BookieBasher.Core
             return JsonConvert.DeserializeObject<T>(json);
         }
 
+        public static T Decode<T>(this ReadOnlyMemory<byte> bytes)
+        {
+            string json = Encoding.UTF8.GetString(bytes.ToArray());
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public static object Decode(this ReadOnlyMemory<byte> bytes, Type type)
+        {
+            string json = Encoding.UTF8.GetString(bytes.ToArray());
+            return JsonConvert.DeserializeObject(json, type);
+        }
+
         public static object Decode(this byte[] bytes, Type type)
         {
             string json = Encoding.UTF8.GetString(bytes);
@@ -43,17 +55,17 @@ namespace BookieBasher.Core
 
         public static TeamAlias FindAlias(this Team team, string name)
         {
-            return team.TeamAlias.AsEnumerable().FirstOrDefault(a => CompareTeamNames(a.Alias, name));
+            return team.TeamAliases.AsEnumerable().FirstOrDefault(a => CompareTeamNames(a.Alias, name));
         }
 
         public static bool IsKnownBy(this Team team, string name)
         {
-            return team.TeamAlias.AsEnumerable().Any(a => CompareTeamNames(a.Alias, name));
+            return team.TeamAliases.AsEnumerable().Any(a => CompareTeamNames(a.Alias, name));
         }
 
         public static bool ContainsAlias(this Team team, List<string> names)
         {
-            foreach (var alias in team.TeamAlias)
+            foreach (var alias in team.TeamAliases)
             {
                 foreach (string name in names)
                 {
@@ -82,7 +94,7 @@ namespace BookieBasher.Core
             return new JSCompetition()
             {
                 CompetitionId = competition.CompetitionId,
-                DefaultAlias = competition.CompetitionAlias.FirstOrDefault(a => a.IsDefault == 1)?.Name,
+                DefaultAlias = competition.CompetitionAliases.FirstOrDefault(a => a.IsDefault == 1)?.Name,
                 FlashScoreUrl = competition.FlashScoreUrl,
                 SoccerWikiId = competition.SoccerWikiId,
                 Sponsor = competition.Sponsor,

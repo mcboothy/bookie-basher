@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace BookieBasher.Core.Database
 {
     public partial class Match
@@ -18,9 +20,9 @@ namespace BookieBasher.Core.Database
         public DateTime LastUpdated { get; set; }
 
         public virtual Team AwayTeam { get; set; }
-        public virtual MatchStats AwayTeamStats { get; set; }
+        public virtual MatchStat AwayTeamStats { get; set; }
         public virtual Team HomeTeam { get; set; }
-        public virtual MatchStats HomeTeamStats { get; set; }
+        public virtual MatchStat HomeTeamStats { get; set; }
         public virtual Season Season { get; set; }
     }
 }

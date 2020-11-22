@@ -23,14 +23,13 @@ namespace BookieBasher.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BBDBContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), builder => 
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), ServerVersion.FromString("10.4.12-mariadb"), builder => 
                 {
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 }));
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
 
 
             //services.AddDbContext<ApplicationDbContext>(options =>

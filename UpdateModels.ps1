@@ -15,10 +15,10 @@ MKDIR -Force temp/BookieBasher.Core
 CD temp/BookieBasher.Core
 
 dotnet new web
-dotnet add package Microsoft.EntityFrameworkCore --version 3.1.1
-dotnet add package Microsoft.EntityFrameworkCore.Tools --version 3.1.1
-dotnet add package Microsoft.EntityFrameworkCore.Design --version 3.1.1
-dotnet add package Pomelo.EntityFrameworkCore.MySql --version 3.1.1
+dotnet add package Microsoft.EntityFrameworkCore --version 5.0.0
+dotnet add package Microsoft.EntityFrameworkCore.Tools --version 5.0.0
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 5.0.0
+dotnet add package Pomelo.EntityFrameworkCore.MySql --version 5.0.0-alpha.2
 
 Write-Host "Done creating temp project";
 
