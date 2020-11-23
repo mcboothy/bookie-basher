@@ -3,7 +3,9 @@ FROM $BASE_IMAGE
 
 WORKDIR /home/blessuser
 
-RUN sudo apt update && sudo apt upgrade
+RUN apt-get update && \
+      apt-get upgrade sudo
+
 RUN npm cache clean -f
 RUN npm install -g n
 RUN n stable
