@@ -82,7 +82,6 @@ namespace BookieBaher.SeasonUpdater
                                     {
                                         dbSeason.LastUpdated = DateTime.Now;
                                         dbSeason.Status = "Creating";
-                                        context.Seasons.Add(dbSeason);
                                         await context.SaveChangesAsync();
 
                                         SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
