@@ -3,13 +3,13 @@ FROM $BASE_IMAGE
 
 WORKDIR /home/blessuser
 
-RUN apt-get update && \
-      apt-get -y -f install && \
-      apt-get -y upgrade sudo
-
 RUN npm cache clean -f
 RUN npm install -g n
 RUN n stable
+
+RUN apt-get update && \
+      apt-get -y -f install && \
+      apt-get -y upgrade sudo
 
 COPY Scraper .
 COPY config.json .
