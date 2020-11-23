@@ -29,17 +29,25 @@ namespace BookieBaher.TeamUpdater
 
         protected override async Task<bool> OnMessageRecieved(object sender, BasicDeliverEventArgs args)
         {
-            if (args.BasicProperties.ContentType == null)
-                throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
-
-            switch (args.BasicProperties.ContentType)
+            try
             {
-                case "process-teams":
-                    await InsertTeams(args.Body.Decode<JSCompetitionTeams>());
-                    return true;
+                if (args.BasicProperties.ContentType == null)
+                    throw new ArgumentNullException(nameof(args.BasicProperties.ContentType));
 
-                default:
-                    throw new ArgumentException($"Invalid content type {args.BasicProperties.ContentType}");
+                switch (args.BasicProperties.ContentType)
+                {
+                    case "process-teams":
+                        await InsertTeams(args.Body.Decode<JSCompetitionTeams>());
+                        return true;
+
+                    default:
+                        throw new ArgumentException($"Invalid content type {args.BasicProperties.ContentType}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error - Exception : {ex.Message} \n {Encoding.UTF8.GetString(args.Body.ToArray())}");
+                throw ex;
             }
         }
 

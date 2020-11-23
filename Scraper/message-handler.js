@@ -58,9 +58,9 @@ class MessageHandler {
                         .then((results) => {
                             var data = Buffer.from(JSON.stringify({
                                 Season: request.Season,
-                                WikiTeams: results[0],
-                                FSFullTeams: results[1],
-                                FSShortTeams: results[2]
+                                WikiTeams: results[0].value,
+                                FSFullTeams: results[1].value,
+                                FSShortTeams: results[2].value
                             }));
 
                             this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
