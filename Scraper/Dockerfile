@@ -5,7 +5,7 @@ WORKDIR /home/blessuser
 
 RUN apt-get update && \
       apt-get -y -f install && \
-      apt-get upgrade sudo
+      apt-get -y upgrade sudo
 
 RUN npm cache clean -f
 RUN npm install -g n
