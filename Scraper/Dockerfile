@@ -4,7 +4,7 @@ FROM $BASE_IMAGE
 WORKDIR /home/blessuser
 
 RUN apt-get update && \
-      apt-get -f install && \
+      apt-get -y -f install && \
       apt-get upgrade sudo
 
 RUN npm cache clean -f
