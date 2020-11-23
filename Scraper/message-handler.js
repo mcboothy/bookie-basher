@@ -13,30 +13,28 @@ class MessageHandler {
         this.logQueue = logQueue;
         await browser.init(chrome);
 
-        var request = {
-            "SeasonId": 2, "CompetitionId": 2, "Year": "2020/2021", "Status": "Failed", "Competition": {
-                "CompetitionId": 2, "CountryId": 0, "Names": null, "DefaultAlias": "Serie A", "FlashScoreUrl": "italy/serie-a", "Sponsor": null, "YearFounded": null, "BetfairId": null, "SoccerWikiId": 51, "StartDate": "0001-01-01T00:00:00", "EndDate": "0001-01-01T00:00:00"
-            }
-        };
+        //var request = {
+        //    "SeasonId": 2, "CompetitionId": 2, "Year": "2020/2021", "Status": "Failed", "Competition": {
+        //        "CompetitionId": 2, "CountryId": 0, "Names": null, "DefaultAlias": "Serie A", "FlashScoreUrl": "italy/serie-a", "Sponsor": null, "YearFounded": null, "BetfairId": null, "SoccerWikiId": 51, "StartDate": "0001-01-01T00:00:00", "EndDate": "0001-01-01T00:00:00"
+        //    }
+        //};
 
-        var wikiPromise = wikiScraper.scrapeTeams(request);
-        var fsFull = flashScraper.scrapeTeams(request, true);
-        var fsShort = flashScraper.scrapeTeams(request, false);
+        //var wikiPromise = wikiScraper.scrapeTeams(request);
+        //var fsFull = flashScraper.scrapeTeams(request, true);
+        //var fsShort = flashScraper.scrapeTeams(request, false);
 
-        Promise.allSettled([wikiPromise, fsFull, fsShort])
-            .then((results) => {
-                var data = Buffer.from(JSON.stringify({
-                    Season: request.Season,
-                    WikiTeams: results[0],
-                    FSFullTeams: results[1],
-                    FSShortTeams: results[2]
-                }));
-
-                //this.sendResults(channel, this.teamQueue, "process-teams", data, msg);
-            })
-            .catch((err) => {
-                //this.sendError(channel, 'request-teams-error', request, err, msg);
-            });
+        //Promise.allSettled([wikiPromise, fsFull, fsShort])
+        //    .then((results) => {
+        //        var data = Buffer.from(JSON.stringify({
+        //            Season: request.Season,
+        //            WikiTeams: results[0].value,
+        //            FSFullTeams: results[1].value,
+        //            FSShortTeams: results[2].value
+        //        }));
+        //    })
+        //    .catch((err) => {
+        //        var n = 0;
+        //    });
     }
 
     async shutdown() {
