@@ -165,6 +165,12 @@ namespace BookieBaher.SeasonUpdater
                     match.LastUpdated = DateTime.Now;
                 }
 
+                if ( ! (await context.Matches.Where(m => m.SeasonId == match.SeasonId && m.Status == "Updating").AnyAsync()))
+                {
+                    Season dbSeason = await context.Seasons.FirstOrDefaultAsync(s => s.SeasonId == match.SeasonId);
+                    dbSeason.Status = "Updated";
+                }
+
                 await context.SaveChangesAsync();
             }
         }
