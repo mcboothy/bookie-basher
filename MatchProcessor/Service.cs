@@ -153,12 +153,8 @@ namespace BookieBaher.SeasonUpdater
                                                      result.MatchStats.Away.SecondHalf.Cards;
                     match.Status = "Result";
                     match.LastUpdated = DateTime.Now;
-
-                    context.MatchStats.Update(match.HomeTeamStats);
-                    context.MatchStats.Update(match.AwayTeamStats);
                 }
 
-                context.Matches.Update(match);
                 await context.SaveChangesAsync();
             }
         }
