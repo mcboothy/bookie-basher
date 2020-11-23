@@ -24,12 +24,13 @@ namespace BookieBasher.Server.Controllers
         [HttpGet]
         public IEnumerable<JSMatch> Get()
         {
-            return context.Fixtures.Select(m => new JSMatch() 
+            return context.Fixtures.Where(m => m.DateTime.Date == DateTime.Now.Date)
+                                   .Select(m => new JSMatch() 
             {
                 HomeTeam = m.HomeTeam,
                 AwayTeam = m.AwayTeam,
                 DateTime = m.DateTime, 
-            }).Take(10);
+            });
         }
     }
 }
