@@ -138,6 +138,16 @@ namespace BookieBaher.SeasonUpdater
                                                .Include((m) => m.Season.Competition)
                                                .FirstAsync(m => m.MatchId == result.Request.Id);
 
+                    if (match.HomeTeamStats == null)
+                    {
+                        match.HomeTeamStats = new MatchStat();
+                    }
+
+                    if (match.AwayTeamStats == null)
+                    {
+                        match.AwayTeamStats = new MatchStat();
+                    }
+
                     match.HomeTeamStats.FirstHalfGoals = result.MatchStats.Home.FirstHalf.Goals;
                     match.HomeTeamStats.FirstHalfCards = result.MatchStats.Home.FirstHalf.Cards;
                     match.HomeTeamStats.TotalGoals = result.MatchStats.Home.FirstHalf.Goals +
@@ -171,8 +181,6 @@ namespace BookieBaher.SeasonUpdater
                 FsmatchId = match.FSMatchID,
                 Postponed = match.Postponed ? (sbyte)1 : (sbyte)0,
                 LastUpdated = DateTime.Now,
-                AwayTeamStats = new MatchStat(),
-                HomeTeamStats = new MatchStat()
             };
         }
     }

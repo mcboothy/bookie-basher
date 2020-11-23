@@ -148,21 +148,25 @@ CREATE
     DEFINER = `root`@`%` 
     SQL SECURITY DEFINER
 VIEW `Fixtures` AS
-    SELECT 
-        `Matches`.`MatchID` AS `MatchID`,
-        `Matches`.`SeasonID` AS `SeasonID`,
-        `HomeTeam`.`Name` AS `HomeTeam`,
-        `HomeTeam`.`TeamID` AS `HomeTeamID`,
-        `AwayTeam`.`Name` AS `AwayTeam`,
-        `AwayTeam`.`TeamID` AS `AwayTeamID`,
-        `Matches`.`HomeTeamStatsID` AS `HomeTeamStatsID`,
-        `Matches`.`AwayTeamStatsID` AS `AwayTeamStatsID`,
-        `Matches`.`DateTime` AS `DateTime`,
-        `Matches`.`Status` AS `Status`
-    FROM
-        ((`Match` `Matches`
-        JOIN `Team` `HomeTeam` ON (`HomeTeam`.`TeamID` = `Matches`.`HomeTeamID`))
-        JOIN `Team` `AwayTeam` ON (`AwayTeam`.`TeamID` = `Matches`.`AwayTeamID`));
+    SELECT `Matches`.`MatchID` AS `MatchID`
+        ,`Matches`.`SeasonID` AS `SeasonID`
+        ,(SELECT  `Alias`
+            FROM `TeamAlias`
+            WHERE `TeamID` = `Matches`.`HomeTeamID`
+            ORDER BY IsDefault DESC
+            LIMIT 0 , 1) AS `HomeTeam`
+        ,`Matches`.`HomeTeamID` AS `HomeTeamID`
+        ,(SELECT `Alias`
+            FROM `TeamAlias`
+            WHERE `TeamID` = `Matches`.`AwayTeamID`
+            ORDER BY IsDefault DESC
+            LIMIT 0 , 1) AS `AwayTeam`
+        ,`Matches`.`AwayTeamID` AS `AwayTeamID`
+        ,`Matches`.`HomeTeamStatsID` AS `HomeTeamStatsID`
+        ,`Matches`.`AwayTeamStatsID` AS `AwayTeamStatsID`
+        ,`Matches`.`DateTime` AS `DateTime`
+        ,`Matches`.`Status` AS `Status`
+    FROM `Match` `Matches`;
 
 CREATE 
     ALGORITHM = UNDEFINED 
