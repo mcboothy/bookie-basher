@@ -56,14 +56,12 @@ namespace BookieBaher.TeamUpdater
 
                 var responce = new JSTeam[3][]
                 {
-                    result.WikiTeams.ToArray(),
-                    result.FSShortTeams.ToArray(),
-                    result.FSFullTeams.ToArray(),
+                    result.WikiTeams,
+                    result.FSShortTeams,
+                    result.FSFullTeams,
                 };
 
                 ut.TeamsResponce = responce.ToJSON();
-
-                context.UnknownTeams.Update(ut);
                 await context.SaveChangesAsync();
             }
         }

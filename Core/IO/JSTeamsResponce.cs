@@ -8,10 +8,10 @@ namespace BookieBasher.Core.IO
     {
         public JSSeason Season { get; set; }
 
-        public List<JSTeam> WikiTeams { get; set; }
+        public JSTeam[] WikiTeams { get; set; }
 
-        public List<JSTeam> FSShortTeams { get; set; }
+        public JSTeam[] FSShortTeams { get; set; }
 
-        public List<JSTeam> FSFullTeams { get; set; }
+        public JSTeam[] FSFullTeams { get; set; }
     }
 }
