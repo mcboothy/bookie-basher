@@ -11,6 +11,8 @@ RUN apt-get update && \
       apt-get -y -f install && \
       apt-get -y upgrade sudo
 
+RUN apt-get install libatomic1
+
 COPY Scraper .
 COPY config.json .
 
