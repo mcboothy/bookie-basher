@@ -130,9 +130,9 @@ class MessageHandler {
                             .then((result) => {
                                 results.push({
                                     Competition: competition,
-                                    WikiTeams: result[0],
-                                    FSShortTeams: result[1],
-                                    FSFullTeams: result[2]
+                                    WikiTeams: result[0].value,
+                                    FSShortTeams: result[1].value,
+                                    FSFullTeams: result[2].value
                                 });
                             })
                             .catch((err) => {

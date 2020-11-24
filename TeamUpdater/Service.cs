@@ -47,7 +47,7 @@ namespace BookieBaher.TeamUpdater
             catch (Exception ex)
             {
                 Log($"Error - Exception : {ex.Message} \n {Encoding.UTF8.GetString(args.Body.ToArray())}");
-                throw ex;
+                throw;
             }
         }
 
