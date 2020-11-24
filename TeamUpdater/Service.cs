@@ -53,14 +53,17 @@ namespace BookieBaher.TeamUpdater
 
         private async Task InsertTeams(JSCompetitionTeams result)
         {
-            Log($"Inserting teams for {result.Season.Competition.DefaultAlias}");
+            if (result.Season == null)
+                throw new ArgumentNullException(nameof(result.Season));
+
+            Log($"Inserting teams for {result.Season.Competition?.DefaultAlias}");
 
             using (BBDBContext context = new BBDBContext(options))
             {
                 var ut = await context.UnknownTeams.FirstOrDefaultAsync(ut => ut.SeasonId == result.Season.SeasonId);
 
                 if (ut == null)
-                    throw new Exception("No season in unknown teams");
+                    throw new Exception($"No season in unknown teams {result.Season.SeasonId}");
 
                 var responce = new JSTeam[3][]
                 {
