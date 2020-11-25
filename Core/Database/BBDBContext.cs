@@ -190,6 +190,11 @@ namespace BookieBasher.Core.Database
 
                 entity.Property(e => e.ErrorId).HasColumnType("int(11)");
 
+                entity.Property(e => e.ContentType)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
                 entity.Property(e => e.Message)
                     .HasColumnType("longtext")
                     .HasCharSet("utf8")

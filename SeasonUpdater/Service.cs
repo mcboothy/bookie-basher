@@ -71,21 +71,17 @@ namespace BookieBaher.SeasonUpdater
                                 await UpdateSeason(context, dbSeason);
                                 break;
 
-                            default:
-                                if (dbSeason.LastUpdated < DateTime.Now.AddHours(-0.5))
-                                {
-                                    bool hasFixtures = await context.Matches.Where(m => m.SeasonId == dbSeason.SeasonId &&
+                            case "Failed":
+                                bool hasFixtures = await context.Matches.Where(m => m.SeasonId == dbSeason.SeasonId &&
                                                                                       m.Status == "Fixture")
                                                                            .AnyAsync();
+                                if (!hasFixtures)
+                                {
+                                    dbSeason.LastUpdated = DateTime.Now;
+                                    dbSeason.Status = "Creating";
+                                    await context.SaveChangesAsync();
 
-                                    if (!hasFixtures)
-                                    {
-                                        dbSeason.LastUpdated = DateTime.Now;
-                                        dbSeason.Status = "Creating";
-                                        await context.SaveChangesAsync();
-
-                                        SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
-                                    }
+                                    SendMessage(Message.Create(dbSeason.ToJSSeason(), "request-fixtures"));
                                 }
                                 break;
                         }                                                    

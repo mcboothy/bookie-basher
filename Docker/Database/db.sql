@@ -138,6 +138,7 @@ CREATE TABLE `Log` (
 
 CREATE TABLE `Error` (
   `ErrorId` int(11) NOT NULL AUTO_INCREMENT,
+  `ContentType` varchar(255) NOT NULL,
   `Request` longtext NOT NULL,
   `Message` longtext DEFAULT NULL,
   PRIMARY KEY (`ErrorId`)

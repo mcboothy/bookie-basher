@@ -54,7 +54,8 @@ namespace BookieBaher.ErrorHandler
                     context.Errors.Add(new Error()
                     {
                         Message = error.Error,
-                        Request = error.Request
+                        Request = error.Request,
+                        ContentType = error.ContentType
                     });
 
                     await context.SaveChangesAsync();
