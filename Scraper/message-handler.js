@@ -26,7 +26,7 @@ class MessageHandler {
         //Promise.allSettled([wikiPromise, fsFull, fsShort])
         //    .then((results) => {
         //        var data = Buffer.from(JSON.stringify({
-        //            Season: request.Season,
+        //            Season: request,
         //            WikiTeams: results[0].value,
         //            FSFullTeams: results[1].value,
         //            FSShortTeams: results[2].value
@@ -57,7 +57,7 @@ class MessageHandler {
                     Promise.allSettled([wikiPromise, fsFull, fsShort])
                         .then((results) => {
                             var data = Buffer.from(JSON.stringify({
-                                Season: request.Season,
+                                Season: request,
                                 WikiTeams: results[0].value,
                                 FSFullTeams: results[1].value,
                                 FSShortTeams: results[2].value
