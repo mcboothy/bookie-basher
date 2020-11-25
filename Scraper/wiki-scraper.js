@@ -8,7 +8,7 @@ class WikiScraper {
         var page = await browser.newPage();
 
         try {
-            await page.goto(BASE_URL + "league.php?leagueid=" + request.SoccerWikiId, { timeout: 300000 });
+            await page.goto(BASE_URL + "league.php?leagueid=" + request.Competition.SoccerWikiId, { timeout: 300000 });
             await page.addScriptTag({ url: 'https://code.jquery.com/jquery-3.2.1.min.js' });
             await page.waitForSelector('.factfileBorder');
 
