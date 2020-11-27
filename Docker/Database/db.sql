@@ -197,14 +197,29 @@ VALUES
 (2,'Italy'),
 (3,'England'),
 (4,'Scotland'),
-(5,'Australlia');
+(5,'Australlia'),
+(6,'Spain'),
+(7,'Germany'),
+(8,'Netherlands'),
+(9,'France'),
+(10,'Greece'),
+(11,'Turkey');
 
 INSERT INTO `Competition` 
 VALUES 
-(1,1,'england/premier-league',NULL,NULL,31,28,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(2,2,'italy/serie-a',NULL,NULL,81,51,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(3,3,'scotland/premiership',NULL,NULL,105,80,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
-(4,4,'australia/a-league',NULL,NULL,NULL,5,'2020-10-01 00:00:00','2021-08-31 00:00:00');
+(1,1,'england/premier-league',NULL, NULL,31,28,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(2,2,'italy/serie-a',NULL, NULL,81,51,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(3,3,'scotland/premiership',NULL, NULL,105,80,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(4,4,'australia/a-league',NULL, NULL,5,'2020-10-01 00:00:00','2021-08-31 00:00:00'),
+(6,6,'spain/laliga',NULL, NULL,117,89,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(7,6,'spain/laliga2',NULL, NULL,119,90,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(8,7,'germany/bundesliga',NULL, NULL,59,39,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(9,7,'germany/2-bundesliga',NULL, NULL,61,40,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(10,8,'netherlands/eerste-divisie',NULL, NULL,89979,67,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(11,3,'scotland/championship',NULL, NULL,107,81,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(12,9,'france/ligue-1',NULL, NULL,55,36,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(13,10,'greece/super-league',NULL, NULL,45,'2020-08-01 00:00:00','2021-05-31 00:00:00'),
+(14,11,'turkey/super-lig',NULL, NULL,95,'2020-08-01 00:00:00','2021-05-31 00:00:00');
 
 INSERT INTO `CompetitionAlias` 
 VALUES
@@ -213,7 +228,28 @@ VALUES
 (3,2,'Serie A','BETFAIR|WIKI|FLASHSCORE',1),
 (4,3,'Premiership','WIKI|FLASHSCORE',0),
 (5,3,'Scottish Premier','BETFAIR',1),
-(6,4,'A-League','WIKI|FLASHSCORE',1);
+(6,4,'A-League','WIKI|FLASHSCORE',1),
+(30,6,'La Liga','WIKI',1),
+(31,6,'LaLiga','FLASHSCORE',0),
+(32,6,'Primera Division','BETFAIR',0),
+(33,6,'La Liga 2','WIKI',1),
+(34,6,'LaLiga2','FLASHSCORE',0),
+(35,6,'Segunda Division','BETFAIR',0),
+(36,7,'Bundesliga','WIKI|FLASHSCORE',1),
+(37,7,'Bundesliga 1','BETFAIR',0),
+(38,8,'2. Bundesliga','WIKI|FLASHSCORE',0),
+(39,8,'Bundesliga 2','BETFAIR',1),
+(40,9,'Eredivisie','BETFAIR|WIKI|FLASHSCORE"',1),
+(41,10,'Eerste Divisie','WIKI|FLASHSCORE',0),
+(42,10,'Belgian Jupiler League','BETFAIR',1),
+(43,11,'Championship','WIKI|FLASHSCORE',0),
+(44,11,'Scottish Championship','BETFAIR',1),
+(45,12,'Ligue 1','WIKI|FLASHSCORE',1),
+(46,12,'Ligue 1 Orange','BETFAIR',0),
+(47,13,'Super League 1','WIKI',0),
+(48,13,'Super League','FLASHSCORE',1),
+(49,14,'Süper Lig','WIKI',1),
+(50,14,'Super Lig','FLASHSCORE',0);
 
 INSERT INTO `Team` 
 VALUES 
