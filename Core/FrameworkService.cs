@@ -126,7 +126,8 @@ namespace BookieBasher.Core
                     JSError error = new JSError()
                     {
                         Error = ex.ToDetailedString(),
-                        Request = ea.BasicProperties.ContentType
+                        ContentType = ea.BasicProperties.ContentType,
+                        Request = Encoding.UTF8.GetString(ea.Body.ToArray())
                     };
 
                     SendMessage(Message.Create(error, "process-error"), errorQueue);
