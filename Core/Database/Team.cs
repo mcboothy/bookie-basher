@@ -16,7 +16,6 @@ namespace BookieBasher.Core.Database
         }
 
         public int TeamId { get; set; }
-        public string Name { get; set; }
         public string LogoUrl { get; set; }
         public int? SeasonId { get; set; }
 
