@@ -115,34 +115,8 @@ class MessageHandler {
                         });
                     break;
                 }
-                case "request-all-teams": {
-                    this.log(channel, 'scraping all teams');
-
-                    var results = [];
-                    for (const competition of request.Competitions) {
-                        this.log(channel, `scraping teams for ${competition.DefaultAlias}`);
-
-                        var wiki = wikiScraper.scrapeTeams(competition);
-                        var flash = flashScraper.scrapeTeams(competition);
-                        var flashFull = flashScraper.scrapeTeams(competition, true);
-
-                        await Promise.all([wiki, flash, flashFull])
-                            .then((result) => {
-                                results.push({
-                                    Competition: competition,
-                                    WikiTeams: result[0].value,
-                                    FSShortTeams: result[1].value,
-                                    FSFullTeams: result[2].value
-                                });
-                            })
-                            .catch((err) => {
-                                this.sendError(channel, 'request-all-teams-error', request, err, msg);
-                            });
-                    }
-                    var data = Buffer.from(JSON.stringify({
-                        CompetitionTeams: results
-                    }));
-                    this.sendReply(channel, "process-all-teams", data, msg);
+                case "update-status": {
+                    this.sendResults(channel, "update-status", msg.content, msg);
                     break;
                 }
                 default:

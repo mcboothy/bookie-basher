@@ -32,8 +32,26 @@ namespace BookieBaher.SeasonUpdater
                     await UpdateSeason(args.Body.Decode<JSSeason>());
                     return true;
 
+                case "update-status":
+                    await UpdateStatus(args.Body.Decode<JSSeason>());
+                    return true;
+
                 default:
                     throw new ArgumentException($"Invalid content type {args.BasicProperties.ContentType}");
+            }
+        }
+
+        private async Task UpdateStatus(JSSeason season)
+        {
+            using (BBDBContext context = new BBDBContext(options))
+            {
+                Season dbSeason = await context.Seasons.FirstAsync(s => s.SeasonId == season.SeasonId);
+
+                if (dbSeason.Status == "Updating")
+                {
+                    dbSeason.Status = "Updated";
+                    await context.SaveChangesAsync();
+                }
             }
         }
 
@@ -159,6 +177,8 @@ namespace BookieBaher.SeasonUpdater
 
                     SendMessage(Message.Create(request, "request-match"));
                 }
+
+                SendMessage(Message.Create(dbSeason.ToJSSeason(), "update-status"));
             }
             else
             {
