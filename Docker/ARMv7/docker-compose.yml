@@ -1,11 +1,7 @@
 version: '3.8'
 volumes:
   maria-db-volume:
-    driver_opts:
-      device: "/dev/sda"    
   msg-queue-volume:  
-    driver_opts:
-      device: "/dev/sda"      
 services:
   maria-db:
     image: yobasystems/alpine-mariadb:10.4.12-arm32v7    
