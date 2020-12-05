@@ -1,16 +1,16 @@
 version: '3.8'
 volumes:
-  bb_database_volume:
-  bb_msg_queue_volume:  
+  maria-db-volume:
+  msg-queue-volume:  
 services:
-  bb_database:
+  maria-db:
     image: mariadb:10.5
     restart: unless-stopped    
     ports:
       - 3306:3306
     volumes:
       - ../Database/db.sql:/docker-entrypoint-initdb.d/db.sql
-      - bb_database_volume:/var/lib/mysql
+      - maria-db-volume:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: bookie-basher-user
@@ -21,7 +21,7 @@ services:
       placement:
         constraints:
           - node.labels.db==true      
-  bb_rabbit:
+  rabbit-mq:
     image: rabbitmq:3.8-management
     ports:
       - 5672:5672
@@ -31,7 +31,7 @@ services:
       RABBITMQ_LOGS: "-"
       RABBITMQ_SASL_LOGS: "-"
     volumes:
-      - bb_msg_queue_volume:/data/mnesia
+      - msg-queue-volume:/data/mnesia
       - ../RabbitMQ/definitions.json:/opt/definitions.json
       - ../RabbitMQ/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
     deploy:
@@ -39,109 +39,109 @@ services:
       placement:
         constraints:
           - node.labels.mq==true      
-  bb_season_updater:
-    image: bb_season_updater
+  season-updater:
+    image: mcboothy/bookie-basher:season-updater-x64
     build: 
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster          
+        SDK_IMAGE: buster-slim          
     depends_on:
-      - bb_database      
-      - bb_rabbit     
+      - maria-db      
+      - rabbit-mq     
     restart: unless-stopped
     deploy:
       replicas: 2    
     environment:
-      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
-      MQHost: bb_rabbit
-  bb_match_processor:
-    image: bb_match_processor
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      MQHost: rabbit-mq
+  match-processor:
+    image: mcboothy/bookie-basher:match-processor-x64
     build: 
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster           
+        SDK_IMAGE: buster-slim           
     depends_on:
-      - bb_database      
-      - bb_rabbit     
+      - maria-db      
+      - rabbit-mq     
     restart: unless-stopped
     deploy:
       replicas: 2    
     environment:
-      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
-      MQHost: bb_rabbit
-  bb_team_updater:
-    image: bb_team_updater
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      MQHost: rabbit-mq
+  team-updater:
+    image: mcboothy/bookie-basher:team-updater-x64
     build: 
       context: ../../
       dockerfile: ./TeamUpdater/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster           
+        SDK_IMAGE: buster-slim           
     deploy:
       replicas: 0                   
     restart: unless-stopped
     environment:
-      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
-      MQHost: bb_rabbit
-  bb_error_handler:
-    image: bb_error_handler
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"          
+      MQHost: rabbit-mq
+  error-handler:
+    image: mcboothy/bookie-basher:log-error-handler-x64
     build: 
       context: ../../
       dockerfile: ./ErrorHandler/Dockerfile
       args:
-        BASE_IMAGE: bionic-arm32v7   
-        SDK_IMAGE: bionic-arm32v7      
+        BASE_IMAGE: buster-slim  
+        SDK_IMAGE: buster-slim       
     depends_on:
-      - bb_database      
-      - bb_rabbit     
+      - maria-db      
+      - rabbit-mq     
     restart: unless-stopped
     deploy:
       replicas: 2        
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
-      MQHost: bb_rabbit  
-  bb_log_processor:
-    image: bb_log_processor
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
+      MQHost: rabbit-mq  
+  log-processor:
+    image: mcboothy/bookie-basher:log-processor-x64
     build: 
       context: ../../
       dockerfile: ./LogProcessor/Dockerfile
       args:
-        BASE_IMAGE: bionic-arm32v7   
-        SDK_IMAGE: bionic-arm32v7      
+        BASE_IMAGE: buster-slim  
+        SDK_IMAGE: buster-slim     
     depends_on:
-      - bb_database      
-      - bb_rabbit     
+      - maria-db      
+      - rabbit-mq     
     restart: unless-stopped
     deploy:
       replicas: 2        
     environment:
-      ConnectionString: "server=bb_database;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
-      MQHost: bb_rabbit         
-  bb_server:
-    image: bb_server
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
+      MQHost: rabbit-mq         
+  server:
+    image: mcboothy/bookie-basher:server-x64
     build: 
       context: ../../
       dockerfile: ./Server/Dockerfile
       args:
         BASE_IMAGE: buster-slim  
-        SDK_IMAGE: buster            
+        SDK_IMAGE: buster-slim         
     ports:
       - 8080:80
     depends_on:
-      - bb_database      
-      - bb_rabbit     
+      - maria-db      
+      - rabbit-mq     
     restart: unless-stopped
     deploy:
       replicas: 2    
     environment:
-      ConnectionString: "server=192.168.1.210;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
-      MQHost: bb_rabbit      
-  bb_scraper:
-    image: bb_scraper
+      ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
+      MQHost: rabbit-mq      
+  scraper:
+    image: mcboothy/bookie-basher:scraper-x64
     build: 
       context: ../../
       dockerfile: ./Scraper/Dockerfile      
@@ -151,6 +151,6 @@ services:
     deploy:
       replicas: 0
     environment:
-      MQHost: 192.168.1.210
+      MQHost: maria-db
       MQVirtualHost: bookie-basher
       ChromePath: /usr/bin/google-chrome

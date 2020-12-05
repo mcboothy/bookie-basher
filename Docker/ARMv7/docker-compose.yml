@@ -1,7 +1,11 @@
 version: '3.8'
 volumes:
   maria-db-volume:
+    driver_opts:
+      device: "/dev/sda"    
   msg-queue-volume:  
+    driver_opts:
+      device: "/dev/sda"      
 services:
   maria-db:
     image: yobasystems/alpine-mariadb:10.4.12-arm32v7    
@@ -40,7 +44,7 @@ services:
         constraints:
           - node.labels.mq==true
   season-updater:
-    image: mcboothy/bookie-basher:season-updater
+    image: mcboothy/bookie-basher:season-updater-x64
     build: 
       context: ../../
       dockerfile: ./SeasonUpdater/Dockerfile
@@ -57,7 +61,7 @@ services:
       ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"
       MQHost: rabbit-mq
   match-processor:
-    image: mcboothy/bookie-basher:match-processor
+    image: mcboothy/bookie-basher:match-processor-x64
     build: 
       context: ../../
       dockerfile: ./MatchProcessor/Dockerfile
@@ -74,7 +78,7 @@ services:
       ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"   
       MQHost: rabbit-mq
   team-updater:
-    image: mcboothy/bookie-basher:team-updater
+    image: mcboothy/bookie-basher:team-updater-x64
     build: 
       context: ../../
       dockerfile: ./TeamUpdater/Dockerfile
@@ -91,7 +95,7 @@ services:
       ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
       MQHost: rabbit-mq  
   error-handler:
-    image: mcboothy/bookie-basher:log-error-handler
+    image: mcboothy/bookie-basher:log-error-handler-x64
     build: 
       context: ../../
       dockerfile: ./ErrorHandler/Dockerfile
@@ -108,7 +112,7 @@ services:
       ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
       MQHost: rabbit-mq  
   log-processor:
-    image: mcboothy/bookie-basher:log-processor
+    image: mcboothy/bookie-basher:log-processor-x64
     build: 
       context: ../../
       dockerfile: ./LogProcessor/Dockerfile
@@ -125,7 +129,7 @@ services:
       ConnectionString: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"         
       MQHost: rabbit-mq              
   server:
-    image: mcboothy/bookie-basher:server
+    image: mcboothy/bookie-basher:server-x64
     build: 
       context: ../../
       dockerfile: ./Server/Dockerfile
@@ -146,7 +150,7 @@ services:
       DefaultConnection: "server=maria-db;port=3306;user=bookie-basher-user;password=P@ssword12;database=Bookie-Basher"        
       MQHost: rabbit-mq     
   scraper:
-    image: mcboothy/bookie-basher:scraper
+    image: mcboothy/bookie-basher:scraper-x64
     build: 
       context: ../../
       dockerfile: ./Scraper/Dockerfile      
