@@ -2,8 +2,8 @@
     "rabbit_version": "3.6.5",
     "users": [
       {
-        "name": "mcboothy",
-        "password": "03101983",
+        "name": "user1",
+        "password": "<PASSWORD>",
         "tags": "administrator"
       },
       {
